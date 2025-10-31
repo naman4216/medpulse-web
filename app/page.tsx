@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Link from 'next/link';
 import {
   ArrowRight, CheckCircle, Video, Calendar, Users, Shield, Clock, TrendingUp,
   Zap, FileText, BarChart3, Heart, BrainCircuit, MessageSquare, Briefcase,
@@ -52,39 +53,45 @@ interface PricingCardProps {
   savings?: string;      // Optional prop
 }
 
-const PricingCard = ({ name, price, period, description, features, buttonText, highlighted = false, savings }: PricingCardProps) => (
-  <Card className={`relative ${highlighted ? 'border-2 border-primary shadow-2xl scale-105' : 'border'}`}>
-    {highlighted && (
-      <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">
-        Most Popular
-      </div>
-    )}
-    {savings && (
-      <div className="absolute -top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-        {savings}
-      </div>
-    )}
-    <CardContent className="p-8">
-      <h3 className="text-2xl font-medium mb-2">{name}</h3>
-      <p className="text-sm text-muted-foreground mb-6">{description}</p>
-      <div className="mb-6">
-        <span className="text-5xl font-medium">{price}</span>
-        <span className="text-muted-foreground">{period}</span>
-      </div>
-      <Button size="lg" className={`w-full mb-8 ${highlighted ? 'bg-primary' : ''}`}>
-        {buttonText}
-      </Button>
-      <ul className="space-y-3">
-        {features.map((feature, idx) => (
-          <li key={idx} className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-            <span className="text-sm">{feature}</span>
-          </li>
-        ))}
-      </ul>
-    </CardContent>
-  </Card>
-);
+const PricingCard = ({ name, price, period, description, features, buttonText, highlighted = false, savings }: PricingCardProps) => {
+  const linkHref = buttonText.toLowerCase().includes('sales') ? '/contact-sales' : '/signup';
+  return (
+    <Card className={`relative ${highlighted ? 'border-2 border-primary shadow-2xl scale-105' : 'border'}`}>
+      {highlighted && (
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">
+          Most Popular
+        </div>
+      )}
+      {savings && (
+        <div className="absolute -top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+          {savings}
+        </div>
+      )}
+      <CardContent className="p-8">
+        <h3 className="text-2xl font-medium mb-2">{name}</h3>
+        <p className="text-sm text-muted-foreground mb-6">{description}</p>
+        <div className="mb-6">
+          <span className="text-5xl font-medium">{price}</span>
+          <span className="text-muted-foreground">{period}</span>
+        </div>
+        {/* FIX: Wrapped button with Link for navigation */}
+        <Link href={linkHref} passHref>
+          <Button size="lg" className={`w-full mb-8 ${highlighted ? 'bg-primary' : ''}`}>
+            {buttonText}
+          </Button>
+        </Link>
+        <ul className="space-y-3">
+          {features.map((feature, idx) => (
+            <li key={idx} className="flex items-start gap-3">
+              <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+              <span className="text-sm">{feature}</span>
+            </li>
+          ))}
+        </ul>
+      </CardContent>
+    </Card>
+  );
+};
 
 // FIX: Added TypeScript interface for FeatureCard props
 interface FeatureCardProps {
@@ -198,67 +205,68 @@ interface HowItWorksStep {
 }
 
 const HowItWorksSection = () => {
-    const steps: HowItWorksStep[] = [
-        { num: "1", title: "Sign Up", desc: "Create your account in under 2 minutes", icon: UserCheck },
-        { num: "2", title: "Customize", desc: "Set up your practice profile and preferences", icon: Layers },
-        { num: "3", title: "Import Data", desc: "Easily migrate your existing patient records", icon: Database },
-        { num: "4", title: "Go Live", desc: "Start seeing patients immediately", icon: Zap },
-    ];
-    
-    return (
-        <section className="w-full py-20 bg-background">
-            <div className="container px-4 mx-auto max-w-7xl">
-                <div className="text-center mb-16">
-                    <h2 className="text-4xl font-medium mb-4">Get Started in Minutes</h2>
-                    <p className="text-xl text-muted-foreground">Simple onboarding, powerful results</p>
-                </div>
-                <div className="grid md:grid-cols-4 gap-8">
-                    {steps.map((step, idx) => {
-                        const IconComponent = step.icon;
-                        return (
-                            <div key={idx} className="relative text-center">
-                                <div className="h-16 w-16 mx-auto mb-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-medium shadow-lg">
-                                    {step.num}
-                                </div>
-                                <IconComponent className="h-8 w-8 mx-auto mb-3 text-primary" />
-                                <h4 className="text-xl font-semibold mb-2">{step.title}</h4>
-                                <p className="text-muted-foreground">{step.desc}</p>
-                                {idx < 3 && (
-                                    <ChevronRight className="hidden md:block absolute top-8 -right-4 h-6 w-6 text-muted-foreground" />
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
-        </section>
-    );
-};
+  const steps: HowItWorksStep[] = [
+    { num: "1", title: "Sign Up", desc: "Create your account in under 2 minutes", icon: UserCheck },
+    { num: "2", title: "Customize", desc: "Set up your practice profile and preferences", icon: Layers },
+    { num: "3", title: "Import Data", desc: "Easily migrate your existing patient records", icon: Database },
+    { num: "4", title: "Go Live", desc: "Start seeing patients immediately", icon: Zap },
+  ];
 
-// ... (The rest of your components like Header, HeroSection, etc. don't take props and don't need changes)
-// ... I will include them below for completeness.
+  return (
+    <section className="w-full py-20 bg-background">
+      <div className="container px-4 mx-auto max-w-7xl">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-medium mb-4">Get Started in Minutes</h2>
+          <p className="text-xl text-muted-foreground">Simple onboarding, powerful results</p>
+        </div>
+        <div className="grid md:grid-cols-4 gap-8">
+          {steps.map((step, idx) => {
+            const IconComponent = step.icon;
+            return (
+              <div key={idx} className="relative text-center">
+                <div className="h-16 w-16 mx-auto mb-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-medium shadow-lg">
+                  {step.num}
+                </div>
+                <IconComponent className="h-8 w-8 mx-auto mb-3 text-primary" />
+                <h4 className="text-xl font-semibold mb-2">{step.title}</h4>
+                <p className="text-muted-foreground">{step.desc}</p>
+                {idx < 3 && (
+                  <ChevronRight className="hidden md:block absolute top-8 -right-4 h-6 w-6 text-muted-foreground" />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
 
 const Header = () => (
   <header className="w-full px-4 lg:px-6 h-20 flex items-center bg-background/95 shadow-sm border-b sticky top-0 z-50 backdrop-blur-lg">
     <div className="container mx-auto flex items-center">
-      <div className="font-medium text-xl text-foreground flex items-center gap-2 cursor-pointer">
-        <div className="bg-primary p-2 rounded-lg">
-          <Heart className="h-5 w-5 text-primary-foreground" />
+      <Link href="/" passHref>
+        <div className="font-medium text-xl text-foreground flex items-center gap-2 cursor-pointer">
+          <div className="bg-primary p-2 rounded-lg">
+            <Heart className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <span className="font-medium tracking-tight">HealthCare Pro</span>
         </div>
-        <span className="font-mediumtracking-tight">HealthCare Pro</span>
-      </div>
+      </Link>
       <nav className="ml-auto hidden lg:flex items-center gap-1">
-        <Button variant="ghost" className="hover:text-primary">Features</Button>
-        <Button variant="ghost" className="hover:text-primary">Security</Button>
-        <Button variant="ghost" className="hover:text-primary">Pricing</Button>
-        <Button variant="ghost" className="hover:text-primary">Testimonials</Button>
-        <Button variant="ghost" className="hover:text-primary">Investors</Button>
+        <Link href="/#features" passHref><Button variant="ghost" className="hover:text-primary">Features</Button></Link>
+        <Link href="/#security" passHref><Button variant="ghost" className="hover:text-primary">Security</Button></Link>
+        <Link href="/#pricing" passHref><Button variant="ghost" className="hover:text-primary">Pricing</Button></Link>
+        <Link href="/#testimonials" passHref><Button variant="ghost" className="hover:text-primary">Testimonials</Button></Link>
+        <Link href="/#investors" passHref><Button variant="ghost" className="hover:text-primary">Investors</Button></Link>
       </nav>
       <div className="ml-auto lg:ml-4 flex items-center gap-2">
-        <Button variant="outline" className="hidden sm:inline-flex">Log In</Button>
-        <Button className="bg-primary hover:bg-primary/90">
-          Get Started Free
-        </Button>
+        <Link href="/login" passHref>
+          <Button variant="outline" className="hidden sm:inline-flex">Log In</Button>
+        </Link>
+        <Link href="/signup" passHref>
+          <Button className="bg-primary hover:bg-primary/90">Get Started Free</Button>
+        </Link>
       </div>
     </div>
   </header>
@@ -391,7 +399,7 @@ const StatsBar = () => (
 );
 
 const FeaturesSection = () => (
-  <section className="w-full py-20 bg-background">
+  <section id="features"  className="w-full py-20 bg-background scroll-mt-12">
     <div className="container px-4 mx-auto max-w-7xl">
       <div className="text-center mb-16">
         <div className="inline-block px-4 py-2 bg-primary/10 rounded-full text-sm font-semibold text-primary mb-4">
@@ -507,7 +515,7 @@ const ROISection = () => (
 );
 
 const SecuritySection = () => (
-  <section className="w-full py-20 bg-secondary/30">
+  <section id="security" className="w-full py-20 bg-secondary/30 scroll-mt-12">
     <div className="container px-4 mx-auto max-w-7xl">
       <div className="grid md:grid-cols-2 gap-12 items-center">
         <div>
@@ -589,7 +597,7 @@ const IntegrationsSection = () => (
 );
 
 const TestimonialsSection = () => (
-  <section className="w-full py-20 bg-background">
+  <section id="testimonials"  className="w-full py-20 bg-background scroll-mt-12">
     <div className="container px-4 mx-auto max-w-7xl">
       <div className="text-center mb-16">
         <h2 className="text-4xl font-medium mb-4">Loved by Thousands of Doctors</h2>
@@ -651,9 +659,9 @@ const CaseStudySection = () => (
         <h2 className="text-4xl font-medium mb-4">Real Results from Real Doctors</h2>
         <p className="text-xl text-muted-foreground">See how HealthCare Pro transformed a practice in just 8 months</p>
       </div>
-      <Card className="border-2 shadow-xl overflow-hidden">
+      <Card className="overflow-hidden">
         <div className="grid md:grid-cols-2 gap-0">
-          <div className="bg-gradient-to-br from-primary/5 to-primary/10 p-12 flex flex-col justify-center border-r-2 border-primary/20">
+          <div className="p-12 flex flex-col justify-center border-r-2 border-primary/20">
             <h3 className="text-3xl font-medium mb-4 text-foreground">Dr. Mehta's Clinic, Pune</h3>
             <p className="text-lg text-muted-foreground mb-8">
               A mid-sized clinic transformed their operations and tripled their patient base in just 8 months using HealthCare Pro.
@@ -716,7 +724,7 @@ const CaseStudySection = () => (
 );
 
 const PricingSection = () => (
-  <section className="w-full py-20 bg-background">
+  <section id="pricing" className="w-full py-20 bg-background scroll-mt-12">
     <div className="container px-4 mx-auto max-w-7xl">
       <div className="text-center mb-16">
         <div className="inline-block px-4 py-2 bg-primary/10 rounded-full text-sm font-semibold text-primary mb-4">
@@ -931,7 +939,7 @@ const FAQSection = () => (
 );
 
 const InvestorSection = () => (
-  <section className="w-full py-20 bg-background">
+  <section id="investors" className="w-full py-20 bg-background scroll-mt-12">
     <div className="container px-4 mx-auto max-w-7xl">
       <div className="text-center mb-16">
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-sm font-semibold text-primary mb-4">
@@ -1026,12 +1034,16 @@ const FinalCTASection = () => (
         Join 10,000+ doctors delivering exceptional patient care with less administrative burden
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-        <Button size="lg" className="text-lg px-10 py-7 bg-primary shadow-lg">
-          Start Your Free Trial <ArrowRight className="ml-2 h-5 w-5" />
-        </Button>
-        <Button size="lg" variant="outline" className="text-lg px-10 py-7 border-2">
-          Schedule a Demo <Calendar className="ml-2 h-5 w-5" />
-        </Button>
+        <Link href="/signup" passHref>
+          <Button size="lg" className="text-lg px-10 py-7 bg-primary shadow-lg">
+            Start Your Free Trial <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+        </Link>
+        <Link href="/demo" passHref>
+          <Button size="lg" variant="outline" className="text-lg px-10 py-7 border-2">
+            Schedule a Demo <Calendar className="ml-2 h-5 w-5" />
+          </Button>
+        </Link>
       </div>
       <div className="flex items-center justify-center gap-8 text-sm">
         <div className="flex items-center gap-2">
@@ -1074,37 +1086,37 @@ const Footer = () => (
         <div>
           <h4 className="font-medium mb-4">Product</h4>
           <ul className="space-y-2 text-muted-foreground">
-            <li className="hover:text-primary cursor-pointer transition-colors">Features</li>
-            <li className="hover:text-primary cursor-pointer transition-colors">Pricing</li>
-            <li className="hover:text-primary cursor-pointer transition-colors">Security</li>
-            <li className="hover:text-primary cursor-pointer transition-colors">Integrations</li>
+            <li><Link href="/#features" className="hover:text-primary cursor-pointer transition-colors">Features</Link></li>
+            <li><Link href="/#pricing" className="hover:text-primary cursor-pointer transition-colors">Pricing</Link></li>
+            <li><Link href="/#security" className="hover:text-primary cursor-pointer transition-colors">Security</Link></li>
+            <li><Link href="/integrations" className="hover:text-primary cursor-pointer transition-colors">Integrations</Link></li>
           </ul>
         </div>
         <div>
           <h4 className="font-medium mb-4">Company</h4>
           <ul className="space-y-2 text-muted-foreground">
-            <li className="hover:text-primary cursor-pointer transition-colors">About Us</li>
-            <li className="hover:text-primary cursor-pointer transition-colors">Careers</li>
-            <li className="hover:text-primary cursor-pointer transition-colors">Investors</li>
-            <li className="hover:text-primary cursor-pointer transition-colors">Contact</li>
+            <li><Link href="/about" className="hover:text-primary cursor-pointer transition-colors">About Us</Link></li>
+            <li><Link href="/careers" className="hover:text-primary cursor-pointer transition-colors">Careers</Link></li>
+            <li><Link href="/#investors" className="hover:text-primary cursor-pointer transition-colors">Investors</Link></li>
+            <li><Link href="/contact" className="hover:text-primary cursor-pointer transition-colors">Contact</Link></li>
           </ul>
         </div>
         <div>
           <h4 className="font-medium mb-4">Resources</h4>
           <ul className="space-y-2 text-muted-foreground">
-            <li className="hover:text-primary cursor-pointer transition-colors">Blog</li>
-            <li className="hover:text-primary cursor-pointer transition-colors">Help Center</li>
-            <li className="hover:text-primary cursor-pointer transition-colors">Case Studies</li>
-            <li className="hover:text-primary cursor-pointer transition-colors">API Docs</li>
+            <li><Link href="/blog" className="hover:text-primary cursor-pointer transition-colors">Blog</Link></li>
+            <li><Link href="/help" className="hover:text-primary cursor-pointer transition-colors">Help Center</Link></li>
+            <li><Link href="/case-studies" className="hover:text-primary cursor-pointer transition-colors">Case Studies</Link></li>
+            <li><Link href="/docs" className="hover:text-primary cursor-pointer transition-colors">API Docs</Link></li>
           </ul>
         </div>
       </div>
       <div className="border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
         <p className="text-sm text-muted-foreground">© 2024 HealthCare Pro. All rights reserved.</p>
         <div className="flex gap-6 text-sm text-muted-foreground">
-          <span className="hover:text-primary cursor-pointer transition-colors">Privacy Policy</span>
-          <span className="hover:text-primary cursor-pointer transition-colors">Terms of Service</span>
-          <span className="hover:text-primary cursor-pointer transition-colors">Cookie Policy</span>
+          <Link href="/privacy" className="hover:text-primary cursor-pointer transition-colors">Privacy Policy</Link>
+          <Link href="/terms" className="hover:text-primary cursor-pointer transition-colors">Terms of Service</Link>
+          <Link href="/cookies" className="hover:text-primary cursor-pointer transition-colors">Cookie Policy</Link>
         </div>
       </div>
     </div>
