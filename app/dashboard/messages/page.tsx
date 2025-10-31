@@ -19,7 +19,53 @@ import {
 } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 
-const initialConversations = [
+// --- Types ---
+type Priority = "normal" | "urgent";
+
+interface Conversation {
+  id: number;
+  name: string;
+  lastMessage: string;
+  time: string;
+  unread: number;
+  avatar: string;
+  online: boolean;
+  dob: string;
+  age: number;
+  phone: string;
+  email: string;
+  appointment: string;
+  bloodGroup: string;
+  allergies: string[];
+  chronic: string[];
+  lastVisit: string;
+  priority: Priority;
+  archived: boolean;
+  starred: boolean;
+}
+
+interface Attachment {
+  type: "image" | "pdf" | "file";
+  fileName: string;
+  size: string;
+}
+
+type ChatMessage =
+  | { type: "date"; text: string }
+  | {
+      type: "message";
+      sender: "me" | "patient";
+      text: string;
+      time: string;
+      status?: "sent" | "delivered" | "read";
+      attachment?: Attachment | null;
+    };
+
+type ChatHistories = Record<number, ChatMessage[]>;
+
+interface Template { id: number; title: string; text: string }
+
+const initialConversations: Conversation[] = [
   {
     id: 1,
     name: "Anjali Singh",
@@ -106,40 +152,40 @@ const initialConversations = [
   },
 ];
 
-const initialChatHistory = {
+const initialChatHistory: ChatHistories = {
   1: [
     { type: 'date', text: 'Today' },
-    { sender: "patient", text: "Good morning, Doctor. I have a question about my recent test results.", time: "9:15 AM", status: "read" },
-    { sender: "me", text: "Good morning, Anjali. Of course, I have your results right here. Everything looks normal, no need to worry.", time: "9:17 AM", status: "read" },
-    { sender: "patient", text: "That's a huge relief! Thank you so much for the quick response.", time: "9:18 AM", status: "read" },
-    { sender: "me", text: "You're welcome. Let me know if you have any other questions. Stay healthy!", time: "9:20 AM", status: "read" },
-    { sender: "patient", text: "Thank you, doctor! I'll follow up next week.", time: "9:22 AM", status: "read" },
-    { sender: 'me', text: 'Here is a copy of your test results.', time: '9:25 AM', status: "read", attachment: { type: 'pdf', fileName: 'lab_report.pdf', size: '245 KB' } },
+      { type: 'message', sender: "patient", text: "Good morning, Doctor. I have a question about my recent test results.", time: "9:15 AM", status: "read" },
+      { type: 'message', sender: "me", text: "Good morning, Anjali. Of course, I have your results right here. Everything looks normal, no need to worry.", time: "9:17 AM", status: "read" },
+      { type: 'message', sender: "patient", text: "That's a huge relief! Thank you so much for the quick response.", time: "9:18 AM", status: "read" },
+      { type: 'message', sender: "me", text: "You're welcome. Let me know if you have any other questions. Stay healthy!", time: "9:20 AM", status: "read" },
+      { type: 'message', sender: "patient", text: "Thank you, doctor! I'll follow up next week.", time: "9:22 AM", status: "read" },
+      { type: 'message', sender: 'me', text: 'Here is a copy of your test results.', time: '9:25 AM', status: "read", attachment: { type: 'pdf', fileName: 'lab_report.pdf', size: '245 KB' } },
   ],
   2: [
     { type: 'date', text: 'Today' },
-    { sender: "patient", text: "Doctor, I'm experiencing chest pain since this morning. Should I be worried?", time: "9:30 AM", status: "delivered" },
-    { sender: "patient", text: "It's a sharp pain on the left side.", time: "9:31 AM", status: "delivered" },
-    { sender: "patient", text: "Also feeling a bit dizzy.", time: "9:32 AM", status: "delivered" },
+      { type: 'message', sender: "patient", text: "Doctor, I'm experiencing chest pain since this morning. Should I be worried?", time: "9:30 AM", status: "delivered" },
+      { type: 'message', sender: "patient", text: "It's a sharp pain on the left side.", time: "9:31 AM", status: "delivered" },
+      { type: 'message', sender: "patient", text: "Also feeling a bit dizzy.", time: "9:32 AM", status: "delivered" },
   ],
   3: [],
   4: []
 };
 
 export default function MessagesPage() {
-  const [conversations, setConversations] = useState(initialConversations);
-  const [selectedConversation, setSelectedConversation] = useState(conversations[0]);
-  const [isPatientInfoVisible, setPatientInfoVisible] = useState(true);
-  const [activeTab, setActiveTab] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [messageInput, setMessageInput] = useState('');
-  const [chatHistories, setChatHistories] = useState(initialChatHistory);
-  const [isScheduleDialogOpen, setScheduleDialogOpen] = useState(false);
-  const [isPrescriptionDialogOpen, setPrescriptionDialogOpen] = useState(false);
-  const [isTemplateDialogOpen, setTemplateDialogOpen] = useState(false);
-  const [attachmentPreview, setAttachmentPreview] = useState(null);
-  const fileInputRef = useRef(null);
-  const chatEndRef = useRef(null);
+  const [conversations, setConversations] = useState<Conversation[]>(initialConversations);
+  const [selectedConversation, setSelectedConversation] = useState<Conversation>(initialConversations[0]);
+  const [isPatientInfoVisible, setPatientInfoVisible] = useState<boolean>(true);
+  const [activeTab, setActiveTab] = useState<string>('All');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [messageInput, setMessageInput] = useState<string>('');
+  const [chatHistories, setChatHistories] = useState<ChatHistories>(initialChatHistory);
+  const [isScheduleDialogOpen, setScheduleDialogOpen] = useState<boolean>(false);
+  const [isPrescriptionDialogOpen, setPrescriptionDialogOpen] = useState<boolean>(false);
+  const [isTemplateDialogOpen, setTemplateDialogOpen] = useState<boolean>(false);
+  const [attachmentPreview, setAttachmentPreview] = useState<Attachment | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const chatEndRef = useRef<HTMLDivElement | null>(null);
 
   const messageTemplates = [
     { id: 1, title: "Follow-up Reminder", text: "This is a reminder about your upcoming appointment. Please arrive 15 minutes early to complete any necessary paperwork." },
@@ -151,15 +197,16 @@ export default function MessagesPage() {
   const handleSendMessage = () => {
     if (!messageInput.trim() && !attachmentPreview) return;
 
-    const newMessage = {
+    const newMessage: ChatMessage = {
+      type: 'message',
       sender: "me",
       text: messageInput,
       time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
       status: "sent",
-      attachment: attachmentPreview
+      attachment: attachmentPreview ?? null
     };
 
-    setChatHistories(prev => ({
+    setChatHistories((prev) => ({
       ...prev,
       [selectedConversation.id]: [...(prev[selectedConversation.id] || []), newMessage]
     }));
@@ -174,19 +221,20 @@ export default function MessagesPage() {
     setAttachmentPreview(null);
 
     setTimeout(() => {
-      setChatHistories(prev => ({
+      setChatHistories((prev) => ({
         ...prev,
-        [selectedConversation.id]: prev[selectedConversation.id].map((msg, idx) =>
-          idx === prev[selectedConversation.id].length - 1 && msg.status === "sent"
-            ? { ...msg, status: "delivered" }
-            : msg
-        )
+        [selectedConversation.id]: prev[selectedConversation.id].map((msg, idx) => {
+          if (msg.type === 'message' && idx === prev[selectedConversation.id].length - 1 && msg.status === 'sent') {
+            return { ...msg, status: 'delivered' };
+          }
+          return msg;
+        })
       }));
     }, 1000);
   };
 
-  const handleFileAttach = (e) => {
-    const file = e.target.files[0];
+  const handleFileAttach = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target?.files?.[0];
     if (file) {
       const fileType = file.type.startsWith('image/') ? 'image' :
                       file.type === 'application/pdf' ? 'pdf' : 'file';
@@ -198,7 +246,7 @@ export default function MessagesPage() {
     }
   };
 
-  const toggleStar = (convId) => {
+  const toggleStar = (convId: number) => {
     setConversations(prev => prev.map(conv =>
       conv.id === convId ? { ...conv, starred: !conv.starred } : conv
     ));
@@ -207,13 +255,13 @@ export default function MessagesPage() {
     }
   };
 
-  const toggleArchive = (convId) => {
+  const toggleArchive = (convId: number) => {
     setConversations(prev => prev.map(conv =>
       conv.id === convId ? { ...conv, archived: !conv.archived } : conv
     ));
   };
 
-  const markAsUrgent = (convId) => {
+  const markAsUrgent = (convId: number) => {
     setConversations(prev => prev.map(conv =>
       conv.id === convId ? { ...conv, priority: conv.priority === 'urgent' ? 'normal' : 'urgent' } : conv
     ));
@@ -238,7 +286,7 @@ export default function MessagesPage() {
 
   const currentChat = chatHistories[selectedConversation.id] || [];
 
-  const insertTemplate = (template) => {
+  const insertTemplate = (template: Template) => {
     setMessageInput(template.text);
     setTemplateDialogOpen(false);
   };
