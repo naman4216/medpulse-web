@@ -1,9 +1,7 @@
-// File: app/login/page.tsx (or wherever your login page is)
 
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,27 +15,9 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async (event: React.FormEvent) => {
+  const handleLogin = (event: React.FormEvent) => {
     event.preventDefault();
-    
-    try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        // Handle errors here
-        console.error('Login failed:', result.error);
-        return;
-      }
-
-      // Redirect to dashboard on success
-      router.push('/dashboard');
-    } catch (error) {
-      console.error('Login error:', error);
-    }
+    router.push('/dashboard');
   };
 
   return (
