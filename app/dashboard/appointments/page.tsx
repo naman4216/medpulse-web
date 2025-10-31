@@ -127,7 +127,7 @@ const getPriorityBadge = (priority: AppointmentPriority): ReactNode => {
 
 //=========== 4. APPOINTMENTS PAGE COMPONENT ===========//
 
-const AppointmentsPage: FC = () => {
+export default function AppointmentsPage() {
   const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
