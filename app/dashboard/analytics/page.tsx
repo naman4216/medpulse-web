@@ -81,11 +81,11 @@ export default function AnalyticsPage() {
     const completedRevenue = recentAppointments
       .filter(apt => apt.status === "Completed")
       .reduce((sum, apt) => sum + apt.revenue, 0);
-    
+
     const totalAppointments = recentAppointments.length;
     const completedAppointments = recentAppointments.filter(apt => apt.status === "Completed").length;
     const completionRate = Math.round((completedAppointments / totalAppointments) * 100);
-    
+
     return {
       revenue: completedRevenue,
       appointments: totalAppointments,
@@ -127,7 +127,7 @@ export default function AnalyticsPage() {
           </Button>
         </div>
       </div>
-      
+
       {/* Stat Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
@@ -206,7 +206,7 @@ export default function AnalyticsPage() {
                   <AreaChart data={revenueData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" stroke="#888888" fontSize={12} />
-                    <YAxis stroke="#888888" fontSize={12} tickFormatter={(value) => `₹${value/1000}k`} />
+                    <YAxis stroke="#888888" fontSize={12} tickFormatter={(value) => `₹${value / 1000}k`} />
                     <Tooltip formatter={(value) => `₹${value.toLocaleString()}`} />
                     <Legend />
                     <Area type="monotone" dataKey="revenue" stackId="1" stroke="#2563eb" fill="#2563eb" fillOpacity={0.6} />
@@ -215,7 +215,7 @@ export default function AnalyticsPage() {
                 </ResponsiveContainer>
               </CardContent>
             </Card>
-            
+
             <Card className="lg:col-span-3">
               <CardHeader>
                 <CardTitle>Appointments by Type</CardTitle>
@@ -224,15 +224,15 @@ export default function AnalyticsPage() {
               <CardContent className="flex items-center justify-center">
                 <ResponsiveContainer width="100%" height={350}>
                   <PieChart>
-                    <Pie 
-                      data={appointmentTypeData} 
-                      cx="50%" 
-                      cy="50%" 
-                      labelLine={false} 
-                      outerRadius={120} 
-                      fill="#8884d8" 
-                      dataKey="value" 
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    <Pie
+                      data={appointmentTypeData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={120}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={(entry: any) => `${entry.name} ${(entry.percent * 100).toFixed(0)}%`}
                     >
                       {appointmentTypeData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
@@ -333,7 +333,7 @@ export default function AnalyticsPage() {
                 <BarChart data={revenueData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" stroke="#888888" fontSize={12} />
-                  <YAxis stroke="#888888" fontSize={12} tickFormatter={(value) => `₹${value/1000}k`} />
+                  <YAxis stroke="#888888" fontSize={12} tickFormatter={(value) => `₹${value / 1000}k`} />
                   <Tooltip formatter={(value) => `₹${value.toLocaleString()}`} />
                   <Legend />
                   <Bar dataKey="revenue" fill="#2563eb" radius={[4, 4, 0, 0]} />
@@ -431,12 +431,12 @@ export default function AnalyticsPage() {
                           {apt.revenue > 0 ? `₹${apt.revenue}` : "-"}
                         </td>
                         <td className="text-right py-3 px-4">
-                          <Badge 
+                          <Badge
                             variant={
-                              apt.status === 'Completed' ? 'default' : 
-                              apt.status === 'Canceled' ? 'destructive' : 
-                              apt.status === 'No-Show' ? 'destructive' :
-                              'outline'
+                              apt.status === 'Completed' ? 'default' :
+                                apt.status === 'Canceled' ? 'destructive' :
+                                  apt.status === 'No-Show' ? 'destructive' :
+                                    'outline'
                             }
                           >
                             {apt.status}
