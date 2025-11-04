@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
-// Import all necessary components from shadcn/ui and lucide-react
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,11 +21,9 @@ import {
   AlertCircle, ArrowLeft, Phone, Mail, MapPin, User, Cake,
   HeartPulse, Thermometer, Activity, Pill, FlaskConical, Calendar,
   FileText, Syringe, ClipboardList, Stethoscope, AlertTriangle, UserPlus,
-  Video, DollarSign,MessageSquare, // <-- Add this
+  Video, DollarSign,MessageSquare, 
   PhoneCall
 } from "lucide-react";
-
-// --- Data Types (Expanded for Chart View) ---
 
 type PatientDetails = {
   id: number;
@@ -49,22 +46,22 @@ type PatientDetails = {
 
 type Vitals = {
   date: string;
-  bp: string; // Blood Pressure
-  pulse: string; // Pulse
-  temp: string; // Temperature
-  spO2: string; // Oxygen Saturation
+  bp: string; 
+  pulse: string; 
+  temp: string; 
+  spO2: string; 
   weightKg: number;
   heightCm: number;
 };
 
 type Appointment = {
   id: string;
-  date: string; // Using full date now
+  date: string; 
   time: string;
   type: "In-Clinic" | "Video Call";
   status: "Completed" | "Upcoming" | "Cancelled" | "No Show";
   reason: string;
-  notes?: string; // Optional notes from the visit
+  notes?: string; 
 };
 
 type Prescription = {
@@ -98,7 +95,6 @@ type ClinicalNote = {
   author: "Dr. Sharma";
 };
 
-// This will be our "database" for all patient chart data
 type PatientChartData = {
   details: PatientDetails;
   vitalsHistory: Vitals[];
@@ -108,10 +104,8 @@ type PatientChartData = {
   notes: ClinicalNote[];
 };
 
-// --- Mock Database ---
-
 const mockPatientDatabase: Record<string, PatientChartData> = {
-  "1": { // Vikram Kumar
+  "1": { 
     details: {
       id: 1,
       name: "Vikram Kumar",
@@ -155,7 +149,7 @@ const mockPatientDatabase: Record<string, PatientChartData> = {
       { id: "n1", date: "2024-10-30", type: "SOAP", author: "Dr. Sharma", content: "S: Patient here for annual physical. Reports feeling well. O: BP 130/85. Lungs clear. A: Hypertension, well-controlled on current medication. P: Continue Lisinopril and Amlodipine. Order routine labs. Follow up in 6 months." }
     ],
   },
-  "2": { // Priya Singh
+  "2": { 
     details: {
       id: 2,
       name: "Priya Singh",
@@ -192,7 +186,7 @@ const mockPatientDatabase: Record<string, PatientChartData> = {
       { id: "n2", date: "2024-04-20", type: "Progress", author: "Dr. Sharma", content: "Patient monitoring blood sugar 4x/day. Last HbA1c was 7.2%. Discussed diet and carb counting. Adjusted mealtime insulin lispro. Will re-check A1c in 3 months." }
     ],
   },
-  "4": { // Anjali Mehta (using the lab result from the dashboard)
+  "4": { 
     details: {
       id: 4,
       name: "Anjali Mehta",
@@ -219,7 +213,7 @@ const mockPatientDatabase: Record<string, PatientChartData> = {
       { id: "rx7", medication: "Ferrous Sulfate", dosage: "325mg", frequency: "Once daily", status: "Active", datePrescribed: "2024-10-29", refills: 3 },
     ],
     labResults: [
-      { // This is the lab result from the dashboard page
+      { 
         id: "lab3", testName: "Complete Blood Count (CBC)", date: "2024-10-29", status: "Complete",
         results: [
           { name: "RBC", value: "4.8", flag: "Normal", range: "4.2-5.4" },
@@ -233,12 +227,9 @@ const mockPatientDatabase: Record<string, PatientChartData> = {
       { id: "n3", date: "2024-10-29", type: "SOAP", author: "Dr. Sharma", content: "S: Patient reports persistent fatigue and feeling cold. O: Vitals stable. CBC ordered. A: Suspect anemia, possibly related to hypothyroidism. P: Start Ferrous Sulfate 325mg daily. Follow up via video call to discuss lab results." }
     ],
   },
-  // Add more patient objects (e.g., for id "3", "5", etc.) here...
+
 };
 
-// --- Helper Components ---
-
-// Displays the patient's sidebar card
 function PatientInfoCard({ patient }: { patient: PatientDetails }) {
   return (
     <Card className="sticky top-4">
@@ -304,7 +295,6 @@ function PatientInfoCard({ patient }: { patient: PatientDetails }) {
   );
 }
 
-// Displays the alerts and allergies card
 function AlertsCard({ allergies, conditions }: { allergies: string[], conditions: string[] }) {
   return (
     <Card>
@@ -334,7 +324,8 @@ function AlertsCard({ allergies, conditions }: { allergies: string[], conditions
               <Badge variant="secondary">None</Badge>
             ) : (
               conditions.map(condition => (
-                <Badge key={condition} variant="warning">{condition}</Badge>
+                // --- FIX: Replaced invalid "warning" variant with className ---
+                <Badge key={condition} variant="outline" className="border-amber-600 text-amber-800">{condition}</Badge>
               ))
             )}
           </div>
@@ -343,8 +334,6 @@ function AlertsCard({ allergies, conditions }: { allergies: string[], conditions
     </Card>
   );
 }
-
-// --- Main Page Component ---
 
 export default function PatientChartPage() {
   const router = useRouter();
@@ -356,20 +345,11 @@ export default function PatientChartPage() {
   const [newNote, setNewNote] = useState("");
 
   useEffect(() => {
-    // Simulate fetching data
     setIsLoading(true);
     const data = mockPatientDatabase[patientId];
     if (data) {
       setPatientData(data);
     }
-    // In a real app, you would fetch from an API:
-    // fetch(`/api/patients/${patientId}/chart`)
-    //   .then(res => res.json())
-    //   .then(data => setPatientData(data))
-    //   .catch(err => console.error(err))
-    //   .finally(() => setIsLoading(false));
-
-    // Simulating fetch delay
     setTimeout(() => {
       setIsLoading(false);
     }, 200);
@@ -386,12 +366,11 @@ export default function PatientChartPage() {
       content: newNote,
     };
 
-    // Update state (in a real app, this would be a POST request)
     setPatientData({
       ...patientData,
-      notes: [note, ...patientData.notes], // Add new note to the top
+      notes: [note, ...patientData.notes], 
     });
-    setNewNote(""); // Clear textarea
+    setNewNote(""); 
   };
 
   if (isLoading) {
@@ -429,14 +408,11 @@ export default function PatientChartPage() {
       </Button>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        
-        {/* --- Sidebar (Patient Info & Alerts) --- */}
         <div className="lg:col-span-1 space-y-6">
           <PatientInfoCard patient={patientData.details} />
           <AlertsCard allergies={patientData.details.allergies} conditions={patientData.details.chronicConditions} />
         </div>
 
-        {/* --- Main Content (Tabs) --- */}
         <div className="lg:col-span-3 space-y-6">
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="grid w-full grid-cols-5">
@@ -447,7 +423,6 @@ export default function PatientChartPage() {
               <TabsTrigger value="notes">Notes</TabsTrigger>
             </TabsList>
 
-            {/* --- Overview Tab --- */}
             <TabsContent value="overview" className="space-y-4">
               <Card>
                 <CardHeader>
@@ -459,101 +434,48 @@ export default function PatientChartPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                    <div className="text-center p-3 bg-blue-50 border border-blue-100 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-700">{latestVitals.bp}</div>
-                      <div className="text-xs text-muted-foreground">BP (mmHg)</div>
-                    </div>
-                    <div className="text-center p-3 bg-red-50 border border-red-100 rounded-lg">
-                      <div className="text-2xl font-bold text-red-700">{latestVitals.pulse}</div>
-                      <div className="text-xs text-muted-foreground">Pulse (bpm)</div>
-                    </div>
-                    <div className="text-center p-3 bg-amber-50 border border-amber-100 rounded-lg">
-                      <div className="text-2xl font-bold text-amber-700">{latestVitals.temp}</div>
-                      <div className="text-xs text-muted-foreground">Temp (°F)</div>
-                    </div>
-                    <div className="text-center p-3 bg-indigo-50 border border-indigo-100 rounded-lg">
-                      <div className="text-2xl font-bold text-indigo-700">{latestVitals.spO2}</div>
-                      <div className="text-xs text-muted-foreground">SpO2 (%)</div>
-                    </div>
-                    <div className="text-center p-3 bg-green-50 border border-green-100 rounded-lg">
-                      <div className="text-2xl font-bold text-green-700">{latestVitals.weightKg}</div>
-                      <div className="text-xs text-muted-foreground">Weight (kg)</div>
-                    </div>
+                    <div className="text-center p-3 bg-blue-50 border border-blue-100 rounded-lg"><div className="text-2xl font-bold text-blue-700">{latestVitals.bp}</div><div className="text-xs text-muted-foreground">BP (mmHg)</div></div>
+                    <div className="text-center p-3 bg-red-50 border border-red-100 rounded-lg"><div className="text-2xl font-bold text-red-700">{latestVitals.pulse}</div><div className="text-xs text-muted-foreground">Pulse (bpm)</div></div>
+                    <div className="text-center p-3 bg-amber-50 border border-amber-100 rounded-lg"><div className="text-2xl font-bold text-amber-700">{latestVitals.temp}</div><div className="text-xs text-muted-foreground">Temp (°F)</div></div>
+                    <div className="text-center p-3 bg-indigo-50 border border-indigo-100 rounded-lg"><div className="text-2xl font-bold text-indigo-700">{latestVitals.spO2}</div><div className="text-xs text-muted-foreground">SpO2 (%)</div></div>
+                    <div className="text-center p-3 bg-green-50 border border-green-100 rounded-lg"><div className="text-2xl font-bold text-green-700">{latestVitals.weightKg}</div><div className="text-xs text-muted-foreground">Weight (kg)</div></div>
                   </div>
                 </CardContent>
               </Card>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Pill className="h-5 w-5 text-green-500" />
-                      Active Medications
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {patientData.prescriptions.filter(p => p.status === "Active").map(rx => (
-                        <li key={rx.id} className="flex justify-between text-sm">
-                          <span className="font-medium">{rx.medication}</span>
-                          <span className="text-muted-foreground">{rx.dosage}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
+                  <CardHeader><CardTitle className="flex items-center gap-2"><Pill className="h-5 w-5 text-green-500" />Active Medications</CardTitle></CardHeader>
+                  <CardContent><ul className="space-y-2">{patientData.prescriptions.filter(p => p.status === "Active").map(rx => (<li key={rx.id} className="flex justify-between text-sm"><span className="font-medium">{rx.medication}</span><span className="text-muted-foreground">{rx.dosage}</span></li>))}</ul></CardContent>
                 </Card>
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <ClipboardList className="h-5 w-5 text-purple-500" />
-                      Problem List
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {patientData.details.chronicConditions.map(c => (
-                        <li key={c} className="flex items-center gap-2 text-sm font-medium">
-                          <AlertCircle className="h-4 w-4 text-amber-600" />
-                          {c}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
+                  <CardHeader><CardTitle className="flex items-center gap-2"><ClipboardList className="h-5 w-5 text-purple-500" />Problem List</CardTitle></CardHeader>
+                  <CardContent><ul className="space-y-2">{patientData.details.chronicConditions.map(c => (<li key={c} className="flex items-center gap-2 text-sm font-medium"><AlertCircle className="h-4 w-4 text-amber-600" />{c}</li>))}</ul></CardContent>
                 </Card>
               </div>
             </TabsContent>
 
-            {/* --- Appointments Tab --- */}
             <TabsContent value="appointments">
               <Card>
-                <CardHeader>
-                  <CardTitle>Appointment History</CardTitle>
-                </CardHeader>
+                <CardHeader><CardTitle>Appointment History</CardTitle></CardHeader>
                 <CardContent>
                   <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Date & Time</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Reason</TableHead>
-                        <TableHead>Status</TableHead>
-                      </TableRow>
-                    </TableHeader>
+                    <TableHeader><TableRow><TableHead>Date & Time</TableHead><TableHead>Type</TableHead><TableHead>Reason</TableHead><TableHead>Status</TableHead></TableRow></TableHeader>
                     <TableBody>
                       {patientData.appointmentHistory.map(apt => (
                         <TableRow key={apt.id}>
                           <TableCell className="font-medium">{apt.date} at {apt.time}</TableCell>
-                          <TableCell>
-                            <Badge variant={apt.type === "In-Clinic" ? "default" : "secondary"} className="flex items-center w-fit">
-                              {apt.type === "In-Clinic" ? <UserPlus className="h-3 w-3 mr-1" /> : <Video className="h-3 w-3 mr-1" />}
-                              {apt.type}
-                            </Badge>
-                          </TableCell>
+                          <TableCell><Badge variant={apt.type === "In-Clinic" ? "default" : "secondary"} className="flex items-center w-fit">{apt.type === "In-Clinic" ? <UserPlus className="h-3 w-3 mr-1" /> : <Video className="h-3 w-3 mr-1" />}{apt.type}</Badge></TableCell>
                           <TableCell>{apt.reason}</TableCell>
                           <TableCell>
+                            {/* --- FIX: Replaced invalid variants with className --- */}
                             <Badge variant={
-                              apt.status === "Completed" ? "success" :
-                              apt.status === "Upcoming" ? "info" :
+                              apt.status === "Completed" ? "secondary" :
+                              apt.status === "Upcoming" ? "secondary" :
                               "destructive"
+                            } className={
+                              apt.status === "Completed" ? "bg-green-100 text-green-800" :
+                              apt.status === "Upcoming" ? "bg-blue-100 text-blue-800" :
+                              ""
                             }>{apt.status}</Badge>
                           </TableCell>
                         </TableRow>
@@ -563,44 +485,27 @@ export default function PatientChartPage() {
                 </CardContent>
               </Card>
             </TabsContent>
-            
-            {/* --- Lab Results Tab --- */}
+
             <TabsContent value="labs">
               <Card>
-                <CardHeader>
-                  <CardTitle>Lab Results</CardTitle>
-                </CardHeader>
+                <CardHeader><CardTitle>Lab Results</CardTitle></CardHeader>
                 <CardContent>
                   <Accordion type="single" collapsible className="w-full">
                     {patientData.labResults.map(lab => (
                       <AccordionItem value={lab.id} key={lab.id}>
-                        <AccordionTrigger>
-                          <div className="flex justify-between w-full pr-4">
-                            <span className="font-medium">{lab.testName}</span>
-                            <span className="text-muted-foreground text-sm">{lab.date}</span>
-                          </div>
-                        </AccordionTrigger>
+                        <AccordionTrigger><div className="flex justify-between w-full pr-4"><span className="font-medium">{lab.testName}</span><span className="text-muted-foreground text-sm">{lab.date}</span></div></AccordionTrigger>
                         <AccordionContent>
                           <Table>
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead>Test</TableHead>
-                                <TableHead>Value</TableHead>
-                                <TableHead>Flag</TableHead>
-                                <TableHead>Reference Range</TableHead>
-                              </TableRow>
-                            </TableHeader>
+                            <TableHeader><TableRow><TableHead>Test</TableHead><TableHead>Value</TableHead><TableHead>Flag</TableHead><TableHead>Reference Range</TableHead></TableRow></TableHeader>
                             <TableBody>
                               {lab.results.map(res => (
                                 <TableRow key={res.name}>
                                   <TableCell>{res.name}</TableCell>
-                                  <TableCell className={`font-bold ${
-                                    res.flag === "High" ? "text-red-600" :
-                                    res.flag === "Low" ? "text-blue-600" : ""
-                                  }`}>{res.value}</TableCell>
+                                  <TableCell className={`font-bold ${res.flag === "High" ? "text-red-600" : res.flag === "Low" ? "text-blue-600" : ""}`}>{res.value}</TableCell>
                                   <TableCell>
                                     {res.flag !== "Normal" && (
-                                      <Badge variant={res.flag === "High" ? "destructive" : "info"}>
+                                      // --- FIX: Replaced invalid "info" variant with className ---
+                                      <Badge variant={res.flag === "High" ? "destructive" : "secondary"} className={res.flag === "Low" ? "bg-blue-100 text-blue-800" : ""}>
                                         {res.flag}
                                       </Badge>
                                     )}
@@ -617,34 +522,25 @@ export default function PatientChartPage() {
                 </CardContent>
               </Card>
             </TabsContent>
-            
-            {/* --- Medications Tab --- */}
+
             <TabsContent value="medications">
               <Card>
-                <CardHeader>
-                  <CardTitle>Medication History</CardTitle>
-                </CardHeader>
+                <CardHeader><CardTitle>Medication History</CardTitle></CardHeader>
                 <CardContent>
                   <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Medication</TableHead>
-                        <TableHead>Dosage</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Date Prescribed</TableHead>
-                      </TableRow>
-                    </TableHeader>
+                    <TableHeader><TableRow><TableHead>Medication</TableHead><TableHead>Dosage</TableHead><TableHead>Status</TableHead><TableHead>Date Prescribed</TableHead></TableRow></TableHeader>
                     <TableBody>
                       {patientData.prescriptions.map(rx => (
                         <TableRow key={rx.id}>
                           <TableCell className="font-medium">{rx.medication}</TableCell>
                           <TableCell>{rx.dosage} {rx.frequency}</TableCell>
                           <TableCell>
+                             {/* --- FIX: Replaced invalid "success" variant with className --- */}
                             <Badge variant={
-                              rx.status === "Active" ? "success" :
+                              rx.status === "Active" ? "secondary" :
                               rx.status === "Inactive" ? "secondary" :
                               "outline"
-                            }>{rx.status}</Badge>
+                            } className={rx.status === "Active" ? "bg-green-100 text-green-800" : ""}>{rx.status}</Badge>
                           </TableCell>
                           <TableCell>{rx.datePrescribed}</TableCell>
                         </TableRow>
@@ -654,37 +550,22 @@ export default function PatientChartPage() {
                 </CardContent>
               </Card>
             </TabsContent>
-            
-            {/* --- Notes Tab --- */}
+
             <TabsContent value="notes" className="space-y-4">
               <Card>
-                <CardHeader>
-                  <CardTitle>New Clinical Note</CardTitle>
-                </CardHeader>
+                <CardHeader><CardTitle>New Clinical Note</CardTitle></CardHeader>
                 <CardContent className="space-y-3">
-                  <Textarea
-                    placeholder="Enter new SOAP or progress note..."
-                    value={newNote}
-                    onChange={(e) => setNewNote(e.target.value)}
-                    rows={5}
-                  />
-                  <Button onClick={handleSaveNote} disabled={!newNote.trim()}>
-                    Save Note
-                  </Button>
+                  <Textarea placeholder="Enter new SOAP or progress note..." value={newNote} onChange={(e) => setNewNote(e.target.value)} rows={5}/>
+                  <Button onClick={handleSaveNote} disabled={!newNote.trim()}>Save Note</Button>
                 </CardContent>
               </Card>
               <Card>
-                <CardHeader>
-                  <CardTitle>Note History</CardTitle>
-                </CardHeader>
+                <CardHeader><CardTitle>Note History</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                   {patientData.notes.map(note => (
                     <div key={note.id} className="border p-4 rounded-lg bg-slate-50">
                       <div className="flex justify-between items-center mb-2">
-                        <div className="flex items-center gap-2">
-                          <Badge variant="secondary">{note.type} Note</Badge>
-                          <span className="text-sm font-medium">by {note.author}</span>
-                        </div>
+                        <div className="flex items-center gap-2"><Badge variant="secondary">{note.type} Note</Badge><span className="text-sm font-medium">by {note.author}</span></div>
                         <span className="text-sm text-muted-foreground">{note.date}</span>
                       </div>
                       <p className="text-sm whitespace-pre-wrap">{note.content}</p>
