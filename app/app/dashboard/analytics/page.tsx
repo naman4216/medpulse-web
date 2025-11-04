@@ -69,14 +69,14 @@ const departmentPerformance = [
 ];
 
 const recentAppointments = [
-    { id: "APT001", patient: "Rohan Verma", type: "Consultation", status: "Completed", date: "2025-10-29", time: "10:30 AM", revenue: 500, doctor: "Dr. Shah", rating: 5 },
-    { id: "APT002", patient: "Anjali Singh", type: "Follow-up", status: "Completed", date: "2025-10-29", time: "11:00 AM", revenue: 300, doctor: "Dr. Patel", rating: 4 },
-    { id: "APT003", patient: "Amit Kumar", type: "Telemedicine", status: "Scheduled", date: "2025-10-30", time: "02:00 PM", revenue: 400, doctor: "Dr. Kumar", rating: null },
-    { id: "APT004", patient: "Sneha Patel", type: "New Patient", status: "Scheduled", date: "2025-10-31", time: "09:30 AM", revenue: 600, doctor: "Dr. Shah", rating: null },
-    { id: "APT005", patient: "Vikram Reddy", type: "Canceled", date: "2025-10-28", time: "03:00 PM", revenue: 0, doctor: "Dr. Mehta", rating: null },
-    { id: "APT006", patient: "Priya Sharma", type: "Emergency", status: "Completed", date: "2025-10-29", time: "04:30 PM", revenue: 800, doctor: "Dr. Reddy", rating: 5 },
-    { id: "APT007", patient: "Rahul Mehta", type: "Follow-up", status: "Completed", date: "2025-10-28", time: "01:00 PM", revenue: 300, doctor: "Dr. Kumar", rating: 4 },
-    { id: "APT008", patient: "Neha Gupta", type: "Consultation", status: "No-Show", date: "2025-10-27", time: "11:30 AM", revenue: 0, doctor: "Dr. Patel", rating: null },
+  { id: "APT001", patient: "Rohan Verma", type: "Consultation", status: "Completed", date: "2025-10-29", time: "10:30 AM", revenue: 500, doctor: "Dr. Shah", rating: 5 },
+  { id: "APT002", patient: "Anjali Singh", type: "Follow-up", status: "Completed", date: "2025-10-29", time: "11:00 AM", revenue: 300, doctor: "Dr. Patel", rating: 4 },
+  { id: "APT003", patient: "Amit Kumar", type: "Telemedicine", status: "Scheduled", date: "2025-10-30", time: "02:00 PM", revenue: 400, doctor: "Dr. Kumar", rating: null },
+  { id: "APT004", patient: "Sneha Patel", type: "New Patient", status: "Scheduled", date: "2025-10-31", time: "09:30 AM", revenue: 600, doctor: "Dr. Shah", rating: null },
+  { id: "APT005", patient: "Vikram Reddy", type: "Canceled", date: "2025-10-28", time: "03:00 PM", revenue: 0, doctor: "Dr. Mehta", rating: null },
+  { id: "APT006", patient: "Priya Sharma", type: "Emergency", status: "Completed", date: "2025-10-29", time: "04:30 PM", revenue: 800, doctor: "Dr. Reddy", rating: 5 },
+  { id: "APT007", patient: "Rahul Mehta", type: "Follow-up", status: "Completed", date: "2025-10-28", time: "01:00 PM", revenue: 300, doctor: "Dr. Kumar", rating: 4 },
+  { id: "APT008", patient: "Neha Gupta", type: "Consultation", status: "No-Show", date: "2025-10-27", time: "11:30 AM", revenue: 0, doctor: "Dr. Patel", rating: null },
 ];
 
 const topDoctors = [
@@ -88,12 +88,12 @@ const topDoctors = [
 ];
 
 const performanceMetrics = [
-    { metric: "Patient Satisfaction", value: 92, target: 90, category: "Quality", fullMark: 100 },
-    { metric: "Wait Time (min)", value: 15, target: 20, category: "Efficiency", fullMark: 60 },
-    { metric: "Utilization (%)", value: 88, target: 85, category: "Operations", fullMark: 100 },
-    { metric: "Revenue/Patient (₹)", value: 380, target: 350, category: "Financial", fullMark: 500 },
-    { metric: "Productivity (%)", value: 85, target: 80, category: "Operations", fullMark: 100 },
-    { metric: "Retention (%)", value: 94, target: 90, category: "Quality", fullMark: 100 },
+  { metric: "Patient Satisfaction", value: 92, target: 90, category: "Quality", fullMark: 100 },
+  { metric: "Wait Time (min)", value: 15, target: 20, category: "Efficiency", fullMark: 60 },
+  { metric: "Utilization (%)", value: 88, target: 85, category: "Operations", fullMark: 100 },
+  { metric: "Revenue/Patient (₹)", value: 380, target: 350, category: "Financial", fullMark: 500 },
+  { metric: "Productivity (%)", value: 85, target: 80, category: "Operations", fullMark: 100 },
+  { metric: "Retention (%)", value: 94, target: 90, category: "Quality", fullMark: 100 },
 ];
 
 const alerts = [
@@ -105,10 +105,10 @@ const alerts = [
 
 // A mapping for appointment statuses to icons and colors
 const statusConfig = {
-    Completed: { icon: CheckCircle2, color: 'text-green-500' },
-    Scheduled: { icon: Clock10, color: 'text-blue-500' },
-    Canceled: { icon: XCircle, color: 'text-red-500' },
-    'No-Show': { icon: UserX, color: 'text-orange-500' },
+  Completed: { icon: CheckCircle2, color: 'text-green-500' },
+  Scheduled: { icon: Clock10, color: 'text-blue-500' },
+  Canceled: { icon: XCircle, color: 'text-red-500' },
+  'No-Show': { icon: UserX, color: 'text-orange-500' },
 };
 
 export default function AdvancedAnalyticsPage() {
@@ -135,27 +135,27 @@ export default function AdvancedAnalyticsPage() {
   // Filter appointments
   const filteredAppointments = useMemo(() => {
     let filtered = recentAppointments;
-    
+
     if (statusFilter !== "all") {
       // Handle the case where the status might not be in the original data but is a valid filter
       const validStatuses = ["Completed", "Scheduled", "Canceled", "No-Show"];
       if (validStatuses.includes(statusFilter)) {
-          filtered = filtered.filter(apt => apt.status === statusFilter);
+        filtered = filtered.filter(apt => apt.status === statusFilter);
       }
     }
-    
+
     if (searchQuery) {
       const lowercasedQuery = searchQuery.toLowerCase();
-      filtered = filtered.filter(apt => 
+      filtered = filtered.filter(apt =>
         apt.patient.toLowerCase().includes(lowercasedQuery) ||
         apt.id.toLowerCase().includes(lowercasedQuery) ||
         apt.doctor.toLowerCase().includes(lowercasedQuery)
       );
     }
-    
+
     return filtered;
   }, [statusFilter, searchQuery]);
-  
+
   // Filter department data
   const filteredDepartmentPerformance = useMemo(() => {
     if (selectedDepartment === 'all') {
@@ -198,7 +198,7 @@ export default function AdvancedAnalyticsPage() {
       doctors: topDoctors,
       exportDate: new Date().toISOString()
     }, null, 2);
-    
+
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
@@ -217,15 +217,15 @@ export default function AdvancedAnalyticsPage() {
           <p className="font-medium text-lg mb-2">{label}</p>
           {payload.map((entry: any, index: number) => (
             <div key={index} className="flex items-center justify-between text-sm gap-4">
-                <span className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }}/>
-                    <span className="capitalize">{entry.name}:</span>
-                </span>
-                <span className="font-semibold" style={{ color: entry.color }}>
-                    {typeof entry.value === 'number' && (entry.name.toLowerCase().includes('revenue') || entry.name.toLowerCase().includes('profit') || entry.name.toLowerCase().includes('expenses')) 
-                        ? `₹${entry.value.toLocaleString()}` 
-                        : entry.value}
-                </span>
+              <span className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                <span className="capitalize">{entry.name}:</span>
+              </span>
+              <span className="font-semibold" style={{ color: entry.color }}>
+                {typeof entry.value === 'number' && (entry.name.toLowerCase().includes('revenue') || entry.name.toLowerCase().includes('profit') || entry.name.toLowerCase().includes('expenses'))
+                  ? `₹${entry.value.toLocaleString()}`
+                  : entry.value}
+              </span>
             </div>
           ))}
         </div>
@@ -376,7 +376,7 @@ export default function AdvancedAnalyticsPage() {
               </Badge>
             </div>
             <div className="mt-3 h-2 w-full bg-muted rounded-full overflow-hidden">
-              <div 
+              <div
                 className="h-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-full transition-all duration-500"
                 style={{ width: `${stats.completionRate}%` }}
               />
@@ -509,33 +509,35 @@ export default function AdvancedAnalyticsPage() {
                 </ResponsiveContainer>
               </CardContent>
             </Card>
-             <Card className="lg:col-span-3 hover:shadow-lg transition-shadow">
-                <CardHeader>
-                    <CardTitle>Appointment Types</CardTitle>
-                    <CardDescription>Breakdown of appointments by category</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <ResponsiveContainer width="100%" height={350}>
-                        <PieChart>
-                            <Pie
-                                data={appointmentTypeData}
-                                cx="50%"
-                                cy="50%"
-                                labelLine={false}
-                                outerRadius={120}
-                                fill="#8884d8"
-                                dataKey="value"
-                                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                            >
-                                {appointmentTypeData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={entry.color} />
-                                ))}
-                            </Pie>
-                            <Tooltip formatter={(value, name) => [`${value} appointments`, name]} />
-                            <Legend />
-                        </PieChart>
-                    </ResponsiveContainer>
-                </CardContent>
+            <Card className="lg:col-span-3 hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <CardTitle>Appointment Types</CardTitle>
+                <CardDescription>Breakdown of appointments by category</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={350}>
+                  <PieChart>
+                    <Pie
+                      data={appointmentTypeData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={120}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({ name, percent }: { name: string; percent: number }) =>
+                        `${name} ${(percent * 100).toFixed(0)}%`
+                      }
+                    >
+                      {appointmentTypeData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value, name) => [`${value} appointments`, name]} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
             </Card>
           </div>
         </TabsContent>
@@ -543,295 +545,295 @@ export default function AdvancedAnalyticsPage() {
         {/* Financial Tab */}
         <TabsContent value="financial" className="space-y-4">
           <div className="grid gap-6 md:grid-cols-2">
-             <Card>
-                <CardHeader>
-                    <CardTitle>Revenue vs Expenses</CardTitle>
-                    <CardDescription>Monthly comparison of income and operational costs</CardDescription>
-                </CardHeader>
-                <CardContent>
-                     <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={revenueData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="month" fontSize={12} />
-                            <YAxis fontSize={12} tickFormatter={(value) => `₹${value / 1000}k`} />
-                            <Tooltip content={<CustomTooltip />}/>
-                            <Legend />
-                            <Bar dataKey="revenue" name="Revenue" fill="#8884d8" />
-                            <Bar dataKey="expenses" name="Expenses" fill="#ff7300" />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </CardContent>
-             </Card>
-             <Card>
-                <CardHeader>
-                    <CardTitle>Revenue by Appointment Type</CardTitle>
-                    <CardDescription>Financial contribution of each appointment category</CardDescription>
-                </CardHeader>
-                <CardContent>
-                     <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={appointmentTypeData} layout="vertical">
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis type="number" fontSize={12} tickFormatter={(value) => `₹${value / 1000}k`} />
-                            <YAxis type="category" dataKey="name" fontSize={12} width={100} />
-                            <Tooltip formatter={(value) => `₹${value.toLocaleString()}`} />
-                            <Legend />
-                            <Bar dataKey="revenue" name="Revenue" fill="#00C49F" />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </CardContent>
-             </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Revenue vs Expenses</CardTitle>
+                <CardDescription>Monthly comparison of income and operational costs</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={revenueData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" fontSize={12} />
+                    <YAxis fontSize={12} tickFormatter={(value) => `₹${value / 1000}k`} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend />
+                    <Bar dataKey="revenue" name="Revenue" fill="#8884d8" />
+                    <Bar dataKey="expenses" name="Expenses" fill="#ff7300" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Revenue by Appointment Type</CardTitle>
+                <CardDescription>Financial contribution of each appointment category</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={appointmentTypeData} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" fontSize={12} tickFormatter={(value) => `₹${value / 1000}k`} />
+                    <YAxis type="category" dataKey="name" fontSize={12} width={100} />
+                    <Tooltip formatter={(value) => `₹${value.toLocaleString()}`} />
+                    <Legend />
+                    <Bar dataKey="revenue" name="Revenue" fill="#00C49F" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
 
         {/* Appointments Tab */}
         <TabsContent value="appointments" className="space-y-4">
-            <div className="grid gap-6 lg:grid-cols-2">
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Peak Appointment Hours</CardTitle>
-                        <CardDescription>Identify the busiest hours of the day</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                         <ResponsiveContainer width="100%" height={300}>
-                            <AreaChart data={hourlyDistribution}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="hour" fontSize={12} />
-                                <YAxis fontSize={12} />
-                                <Tooltip />
-                                <Area type="monotone" dataKey="appointments" stroke="#8884d8" fill="#8884d8" />
-                            </AreaChart>
-                        </ResponsiveContainer>
-                    </CardContent>
-                 </Card>
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Weekly Appointment Status</CardTitle>
-                        <CardDescription>Performance across the week</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                         <ResponsiveContainer width="100%" height={300}>
-                            <BarChart data={dailyAppointmentsData}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="day" fontSize={12} />
-                                <YAxis fontSize={12} />
-                                <Tooltip content={<CustomTooltip />} />
-                                <Legend />
-                                <Bar dataKey="completed" stackId="a" fill="#10b981" name="Completed" />
-                                <Bar dataKey="canceled" stackId="a" fill="#ef4444" name="Canceled" />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </CardContent>
-                 </Card>
-            </div>
+          <div className="grid gap-6 lg:grid-cols-2">
             <Card>
-                <CardHeader>
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <div>
-                            <CardTitle>Recent Appointments</CardTitle>
-                            <CardDescription>A log of the latest patient interactions.</CardDescription>
-                        </div>
-                        <div className="flex gap-2 w-full md:w-auto">
-                           <div className="relative w-full md:w-64">
-                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    placeholder="Search by patient, ID, doctor..."
-                                    className="pl-8"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                />
-                            </div>
-                            <Select value={statusFilter} onValueChange={setStatusFilter}>
-                                <SelectTrigger className="w-[180px]">
-                                    <Filter className="h-4 w-4 mr-2" />
-                                    <SelectValue placeholder="Filter by status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">All Statuses</SelectItem>
-                                    <SelectItem value="Completed">Completed</SelectItem>
-                                    <SelectItem value="Scheduled">Scheduled</SelectItem>
-                                    <SelectItem value="Canceled">Canceled</SelectItem>
-                                    <SelectItem value="No-Show">No-Show</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm text-left">
-                            <thead className="text-xs text-muted-foreground uppercase bg-muted/50">
-                                <tr>
-                                    <th className="px-4 py-3">ID</th>
-                                    <th className="px-4 py-3">Patient</th>
-                                    <th className="px-4 py-3">Doctor</th>
-                                    <th className="px-4 py-3">Type</th>
-                                    <th className="px-4 py-3">Date & Time</th>
-                                    <th className="px-4 py-3">Status</th>
-                                    <th className="px-4 py-3 text-right">Revenue</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredAppointments.map((apt) => {
-                                    const { icon: Icon, color } = statusConfig[apt.status] || { icon: AlertCircle, color: 'text-gray-500' };
-                                    return (
-                                        <tr key={apt.id} className="border-b hover:bg-muted/50 transition-colors">
-                                            <td className="px-4 py-3 font-medium">{apt.id}</td>
-                                            <td className="px-4 py-3">{apt.patient}</td>
-                                            <td className="px-4 py-3">{apt.doctor}</td>
-                                            <td className="px-4 py-3">{apt.type}</td>
-                                            <td className="px-4 py-3">{apt.date} at {apt.time}</td>
-                                            <td className="px-4 py-3">
-                                                <Badge variant="outline" className={`gap-1.5 ${color} border-current`}>
-                                                    <Icon className="h-3.5 w-3.5" />
-                                                    {apt.status}
-                                                </Badge>
-                                            </td>
-                                            <td className="px-4 py-3 text-right font-semibold">₹{apt.revenue.toLocaleString()}</td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                </CardContent>
+              <CardHeader>
+                <CardTitle>Peak Appointment Hours</CardTitle>
+                <CardDescription>Identify the busiest hours of the day</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <AreaChart data={hourlyDistribution}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="hour" fontSize={12} />
+                    <YAxis fontSize={12} />
+                    <Tooltip />
+                    <Area type="monotone" dataKey="appointments" stroke="#8884d8" fill="#8884d8" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </CardContent>
             </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Weekly Appointment Status</CardTitle>
+                <CardDescription>Performance across the week</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={dailyAppointmentsData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="day" fontSize={12} />
+                    <YAxis fontSize={12} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend />
+                    <Bar dataKey="completed" stackId="a" fill="#10b981" name="Completed" />
+                    <Bar dataKey="canceled" stackId="a" fill="#ef4444" name="Canceled" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+          <Card>
+            <CardHeader>
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                  <CardTitle>Recent Appointments</CardTitle>
+                  <CardDescription>A log of the latest patient interactions.</CardDescription>
+                </div>
+                <div className="flex gap-2 w-full md:w-auto">
+                  <div className="relative w-full md:w-64">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search by patient, ID, doctor..."
+                      className="pl-8"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </div>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-[180px]">
+                      <Filter className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Filter by status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Statuses</SelectItem>
+                      <SelectItem value="Completed">Completed</SelectItem>
+                      <SelectItem value="Scheduled">Scheduled</SelectItem>
+                      <SelectItem value="Canceled">Canceled</SelectItem>
+                      <SelectItem value="No-Show">No-Show</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm text-left">
+                  <thead className="text-xs text-muted-foreground uppercase bg-muted/50">
+                    <tr>
+                      <th className="px-4 py-3">ID</th>
+                      <th className="px-4 py-3">Patient</th>
+                      <th className="px-4 py-3">Doctor</th>
+                      <th className="px-4 py-3">Type</th>
+                      <th className="px-4 py-3">Date & Time</th>
+                      <th className="px-4 py-3">Status</th>
+                      <th className="px-4 py-3 text-right">Revenue</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredAppointments.map((apt) => {
+                      const { icon: Icon, color } = statusConfig[apt.status] || { icon: AlertCircle, color: 'text-gray-500' };
+                      return (
+                        <tr key={apt.id} className="border-b hover:bg-muted/50 transition-colors">
+                          <td className="px-4 py-3 font-medium">{apt.id}</td>
+                          <td className="px-4 py-3">{apt.patient}</td>
+                          <td className="px-4 py-3">{apt.doctor}</td>
+                          <td className="px-4 py-3">{apt.type}</td>
+                          <td className="px-4 py-3">{apt.date} at {apt.time}</td>
+                          <td className="px-4 py-3">
+                            <Badge variant="outline" className={`gap-1.5 ${color} border-current`}>
+                              <Icon className="h-3.5 w-3.5" />
+                              {apt.status}
+                            </Badge>
+                          </td>
+                          <td className="px-4 py-3 text-right font-semibold">₹{apt.revenue.toLocaleString()}</td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
-        
+
         {/* Patients Tab */}
         <TabsContent value="patients" className="space-y-4">
-            <div className="grid gap-6 md:grid-cols-2">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Patient Growth Over Time</CardTitle>
-                        <CardDescription>Tracking total, new, and returning patients.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <LineChart data={patientGrowthData}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="month" fontSize={12} />
-                                <YAxis yAxisId="left" fontSize={12} />
-                                <YAxis yAxisId="right" orientation="right" fontSize={12} />
-                                <Tooltip />
-                                <Legend />
-                                <Line yAxisId="left" type="monotone" dataKey="totalPatients" name="Total Patients" stroke="#8884d8" />
-                                <Line yAxisId="right" type="monotone" dataKey="newPatients" name="New Patients" stroke="#82ca9d" />
-                                <Line yAxisId="right" type="monotone" dataKey="returning" name="Returning" stroke="#ffc658" />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Patient Churn Rate</CardTitle>
-                        <CardDescription>Percentage of patients lost over time.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <AreaChart data={patientGrowthData}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="month" fontSize={12} />
-                                <YAxis fontSize={12} domain={[0, 'dataMax + 1']} tickFormatter={(value) => `${value}%`} />
-                                <Tooltip formatter={(value) => `${value}%`} />
-                                <Area type="monotone" dataKey="churnRate" name="Churn Rate" stroke="#ef4444" fill="#ef4444" fillOpacity={0.3} />
-                            </AreaChart>
-                        </ResponsiveContainer>
-                    </CardContent>
-                </Card>
-            </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Patient Growth Over Time</CardTitle>
+                <CardDescription>Tracking total, new, and returning patients.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={patientGrowthData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" fontSize={12} />
+                    <YAxis yAxisId="left" fontSize={12} />
+                    <YAxis yAxisId="right" orientation="right" fontSize={12} />
+                    <Tooltip />
+                    <Legend />
+                    <Line yAxisId="left" type="monotone" dataKey="totalPatients" name="Total Patients" stroke="#8884d8" />
+                    <Line yAxisId="right" type="monotone" dataKey="newPatients" name="New Patients" stroke="#82ca9d" />
+                    <Line yAxisId="right" type="monotone" dataKey="returning" name="Returning" stroke="#ffc658" />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Patient Churn Rate</CardTitle>
+                <CardDescription>Percentage of patients lost over time.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <AreaChart data={patientGrowthData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" fontSize={12} />
+                    <YAxis fontSize={12} domain={[0, 'dataMax + 1']} tickFormatter={(value) => `${value}%`} />
+                    <Tooltip formatter={(value) => `${value}%`} />
+                    <Area type="monotone" dataKey="churnRate" name="Churn Rate" stroke="#ef4444" fill="#ef4444" fillOpacity={0.3} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         {/* Performance Tab */}
         <TabsContent value="performance" className="space-y-4">
           <div className="grid gap-6 lg:grid-cols-3">
-             <div className="lg:col-span-2 grid gap-6">
-                <Card>
-                    <CardHeader>
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                             <div>
-                                <CardTitle>Department Performance</CardTitle>
-                                <CardDescription>Compare departments by key metrics.</CardDescription>
-                            </div>
-                            <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
-                                <SelectTrigger className="w-full md:w-[220px]">
-                                    <Filter className="h-4 w-4 mr-2"/>
-                                    <SelectValue placeholder="Filter by Department"/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">All Departments</SelectItem>
-                                    {departmentPerformance.map(d => <SelectItem key={d.department} value={d.department}>{d.department}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        <ResponsiveContainer width="100%" height={300}>
-                             <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                                <CartesianGrid />
-                                <XAxis type="number" dataKey="patients" name="Patients" unit="" fontSize={12} />
-                                <YAxis type="number" dataKey="revenue" name="Revenue" unit="k" tickFormatter={(value) => `${value/1000}`} fontSize={12} />
-                                <ZAxis type="number" dataKey="satisfaction" range={[60, 400]} name="Satisfaction" unit="" />
-                                <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(value, name) => (name === 'Revenue' ? `₹${value.toLocaleString()}`: value)} />
-                                <Legend />
-                                <Scatter name="Departments" data={filteredDepartmentPerformance} fill="#8884d8">
-                                     {departmentPerformance.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={appointmentTypeData[index % appointmentTypeData.length].color} />
-                                    ))}
-                                </Scatter>
-                            </ScatterChart>
-                        </ResponsiveContainer>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Award className="h-5 w-5 text-yellow-500" /> Top Performing Doctors</CardTitle>
-                        <CardDescription>Leaderboard based on revenue and patient ratings.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-4">
-                            {topDoctors.map((doctor, index) => (
-                                <div key={doctor.name} className="flex items-center justify-between p-3 rounded-lg bg-background border hover:bg-muted/50 transition-colors">
-                                    <div className="flex items-center gap-3">
-                                        <span className="font-medium text-lg text-muted-foreground">{index + 1}</span>
-                                        <div>
-                                            <p className="font-semibold">{doctor.name}</p>
-                                            <p className="text-xs text-muted-foreground">{doctor.specialization}</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex gap-4 text-right">
-                                        <div>
-                                            <p className="font-medium">₹{doctor.revenue.toLocaleString()}</p>
-                                            <p className="text-xs text-muted-foreground">Revenue</p>
-                                        </div>
-                                        <div className="flex items-center gap-1">
-                                            <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                                            <span className="font-medium">{doctor.rating}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-             <Card className="lg:col-span-1">
+            <div className="lg:col-span-2 grid gap-6">
+              <Card>
                 <CardHeader>
-                    <CardTitle>Overall Performance Metrics</CardTitle>
-                    <CardDescription>A multi-dimensional view of practice health</CardDescription>
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                    <div>
+                      <CardTitle>Department Performance</CardTitle>
+                      <CardDescription>Compare departments by key metrics.</CardDescription>
+                    </div>
+                    <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+                      <SelectTrigger className="w-full md:w-[220px]">
+                        <Filter className="h-4 w-4 mr-2" />
+                        <SelectValue placeholder="Filter by Department" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Departments</SelectItem>
+                        {departmentPerformance.map(d => <SelectItem key={d.department} value={d.department}>{d.department}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </CardHeader>
                 <CardContent>
-                    <ResponsiveContainer width="100%" height={400}>
-                         <RadarChart cx="50%" cy="50%" outerRadius="80%" data={performanceMetrics}>
-                            <PolarGrid />
-                            <PolarAngleAxis dataKey="metric" fontSize={12}/>
-                            <PolarRadiusAxis angle={30} domain={[0, 'dataMax + 10']} fontSize={10} />
-                            <Radar name="Performance" dataKey="value" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-                             {comparisonMode && <Radar name="Target" dataKey="target" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.4} />}
-                            <Tooltip />
-                            <Legend />
-                        </RadarChart>
-                    </ResponsiveContainer>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                      <CartesianGrid />
+                      <XAxis type="number" dataKey="patients" name="Patients" unit="" fontSize={12} />
+                      <YAxis type="number" dataKey="revenue" name="Revenue" unit="k" tickFormatter={(value) => `${value / 1000}`} fontSize={12} />
+                      <ZAxis type="number" dataKey="satisfaction" range={[60, 400]} name="Satisfaction" unit="" />
+                      <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(value, name) => (name === 'Revenue' ? `₹${value.toLocaleString()}` : value)} />
+                      <Legend />
+                      <Scatter name="Departments" data={filteredDepartmentPerformance} fill="#8884d8">
+                        {departmentPerformance.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={appointmentTypeData[index % appointmentTypeData.length].color} />
+                        ))}
+                      </Scatter>
+                    </ScatterChart>
+                  </ResponsiveContainer>
                 </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><Award className="h-5 w-5 text-yellow-500" /> Top Performing Doctors</CardTitle>
+                  <CardDescription>Leaderboard based on revenue and patient ratings.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {topDoctors.map((doctor, index) => (
+                      <div key={doctor.name} className="flex items-center justify-between p-3 rounded-lg bg-background border hover:bg-muted/50 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <span className="font-medium text-lg text-muted-foreground">{index + 1}</span>
+                          <div>
+                            <p className="font-semibold">{doctor.name}</p>
+                            <p className="text-xs text-muted-foreground">{doctor.specialization}</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-4 text-right">
+                          <div>
+                            <p className="font-medium">₹{doctor.revenue.toLocaleString()}</p>
+                            <p className="text-xs text-muted-foreground">Revenue</p>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                            <span className="font-medium">{doctor.rating}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            <Card className="lg:col-span-1">
+              <CardHeader>
+                <CardTitle>Overall Performance Metrics</CardTitle>
+                <CardDescription>A multi-dimensional view of practice health</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={400}>
+                  <RadarChart cx="50%" cy="50%" outerRadius="80%" data={performanceMetrics}>
+                    <PolarGrid />
+                    <PolarAngleAxis dataKey="metric" fontSize={12} />
+                    <PolarRadiusAxis angle={30} domain={[0, 'dataMax + 10']} fontSize={10} />
+                    <Radar name="Performance" dataKey="value" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+                    {comparisonMode && <Radar name="Target" dataKey="target" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.4} />}
+                    <Tooltip />
+                    <Legend />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </CardContent>
             </Card>
           </div>
         </TabsContent>
