@@ -22,7 +22,7 @@ import {
   Command, CommandEmpty, CommandGroup, CommandInput,
   CommandItem, CommandList, CommandSeparator
 } from "@/components/ui/command";
-import { Textarea } from "@/components/ui/textarea"; // Added Textarea for the new modal
+import { Textarea } from "@/components/ui/textarea";
 
 import {
   Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid,
@@ -50,7 +50,7 @@ import {
   PhoneCall
 } from "lucide-react";
 
-// --- Data Types (no changes here) ---
+// --- Data Types ---
 type Patient = {
   id: number;
   name: string;
@@ -125,7 +125,7 @@ type LabResult = {
 };
 
 
-// --- Mock Data and Helper Functions (no changes here) ---
+// --- Mock Data and Helper Functions ---
 const mockTodaysAppointments: Appointment[] = [
   { id: "apt1", time: "09:30 AM", patient: { id: 1, name: "Vikram Kumar", avatar: "/avatars/05.png", age: 45, phone: "+91 98765 43210" }, type: "In-Clinic", status: "Checked-In", reason: "Annual Physical", priority: "normal" },
   { id: "apt2", time: "11:00 AM", patient: { id: 2, name: "Priya Singh", avatar: "/avatars/02.png", age: 32, phone: "+91 98765 43211" }, type: "Video Call", status: "Confirmed", reason: "Follow-up - Diabetes", priority: "normal" },
@@ -235,22 +235,14 @@ const performanceMetrics = {
   responseTime: 8,
 };
 
-const getStatusBadgeVariant = (status: string) => {
+const getStatusBadgeVariant = (status: Appointment["status"]) => {
   switch (status) {
     case "Checked-In": return "default";
     case "Confirmed": return "secondary";
     case "Upcoming": return "outline";
-    case "Completed": return "success";
+    case "Completed": return "secondary"; // FIX: Changed from "success" to a valid variant
     case "Cancelled": return "destructive";
     default: return "secondary";
-  }
-};
-
-const getPriorityColor = (priority: string) => {
-  switch (priority) {
-    case "urgent": return "text-red-600 bg-red-50 border-red-200";
-    case "high": return "text-orange-600 bg-orange-50 border-orange-200";
-    default: return "text-slate-600 bg-slate-50 border-slate-200";
   }
 };
 
@@ -272,7 +264,6 @@ const formattedDate = today.toLocaleDateString("en-IN", {
 });
 
 // --- Modal Components ---
-
 function NewAppointmentModal({ open, onOpenChange }: { open: boolean, onOpenChange: (open: boolean) => void }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -317,9 +308,6 @@ function NewAppointmentModal({ open, onOpenChange }: { open: boolean, onOpenChan
   );
 }
 
-// ===================================================================
-// ============= RESCHEDULE APPOINTMENT MODAL (NEW) ==================
-// ===================================================================
 function RescheduleAppointmentModal({
   appointment,
   onOpenChange,
@@ -369,9 +357,6 @@ function RescheduleAppointmentModal({
     </Dialog>
   );
 }
-// ===================================================================
-// ===================== END OF NEW COMPONENT ========================
-// ===================================================================
 
 function QuickReviewLabModal({ task, labResult, onOpenChange, onResolve }: { task: Task | null, labResult: LabResult | null, onOpenChange: (open: boolean) => void, onResolve: (taskId: string) => void }) {
   if (!task || !labResult) return null;
@@ -426,7 +411,6 @@ export default function DashboardPage() {
   const [openNewAppointmentModal, setOpenNewAppointmentModal] = useState(false);
   const [reviewingTask, setReviewingTask] = useState<Task | null>(null);
 
-  // --- NEW STATE for reschedule modal ---
   const [reschedulingAppointment, setReschedulingAppointment] = useState<Appointment | null>(null);
 
   const appointmentStats = useMemo(() => {
@@ -469,17 +453,10 @@ export default function DashboardPage() {
     );
   };
 
-  // --- NEW HANDLER for confirming reschedule ---
   const handleConfirmReschedule = (appointmentId: string, newDateTime: string) => {
-    // In a real app, you'd make an API call here.
-    // For now, we'll just show an alert and remove the appointment from today's list.
     const rescheduledApt = todaysAppointments.find(apt => apt.id === appointmentId);
     alert(`Appointment for ${rescheduledApt?.patient.name} has been rescheduled to ${new Date(newDateTime).toLocaleString()}.`);
-    
-    // Remove from today's schedule
     setTodaysAppointments(current => current.filter(apt => apt.id !== appointmentId));
-    
-    // Close the modal
     setReschedulingAppointment(null);
   };
 
@@ -504,25 +481,19 @@ export default function DashboardPage() {
   const highPriorityAppointments = todaysAppointments.filter(apt => apt.priority === 'high');
   const urgentTasks = pendingTasks.filter(task => task.priority === 'urgent');
   const firstPatientWaiting = patientQueue.find(p => p.type === "In-Clinic");
-
   const urgentMessages = messages.filter(m => m.type === 'urgent' && !m.read);
   const refillMessages = messages.filter(m => m.type === 'refill' && !m.read);
   const generalMessages = messages.filter(m => m.type === 'general' && !m.read);
-
   const completedAppointmentCount = appointmentStats.completed;
 
   return (
     <div className="space-y-6">
-      {/* ... Other modals and header ... */}
-
-      {/* --- RENDER the new reschedule modal --- */}
       <RescheduleAppointmentModal 
         appointment={reschedulingAppointment}
         onOpenChange={(open) => !open && setReschedulingAppointment(null)}
         onConfirm={handleConfirmReschedule}
       />
       
-      {/* ... (Rest of the JSX remains the same until the Today's Schedule card) ... */}
       <Dialog open={openCommandBar} onOpenChange={setOpenCommandBar}>
         <DialogContent className="overflow-hidden p-0 shadow-lg">
           <DialogTitle className="sr-only">Command Menu</DialogTitle>
@@ -899,7 +870,12 @@ export default function DashboardPage() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant={getStatusBadgeVariant(apt.status)}>{apt.status}</Badge>
+                          <Badge 
+                            variant={getStatusBadgeVariant(apt.status)}
+                            className={apt.status === 'Completed' ? 'bg-green-100 text-green-800' : ''}
+                          >
+                            {apt.status}
+                          </Badge>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="sm">
@@ -922,7 +898,6 @@ export default function DashboardPage() {
                                 </DropdownMenuItem>
                               )}
                               
-                              {/* --- CHANGE: onClick handler to open the modal --- */}
                               <DropdownMenuItem onClick={() => setReschedulingAppointment(apt)}>
                                 <CalendarClock className="h-4 w-4 mr-2" />
                                 Reschedule
@@ -949,14 +924,12 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
-           {/* ... (Rest of the component) ... */}
            <Tabs defaultValue="weekly" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="weekly">Weekly</TabsTrigger>
               <TabsTrigger value="monthly">Monthly</TabsTrigger>
               <TabsTrigger value="breakdown">Breakdown</TabsTrigger>
             </TabsList>
-
             <TabsContent value="weekly" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card>
@@ -976,7 +949,6 @@ export default function DashboardPage() {
                     </ResponsiveContainer>
                   </CardContent>
                 </Card>
-
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-base">Revenue This Week</CardTitle>
@@ -996,7 +968,6 @@ export default function DashboardPage() {
                 </Card>
               </div>
             </TabsContent>
-
             <TabsContent value="monthly" className="space-y-4">
               <Card>
                 <CardHeader>
@@ -1019,7 +990,6 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
             </TabsContent>
-
             <TabsContent value="breakdown" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card>
@@ -1042,7 +1012,6 @@ export default function DashboardPage() {
                     </ResponsiveContainer>
                   </CardContent>
                 </Card>
-
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-base flex items-center gap-2">
@@ -1066,115 +1035,6 @@ export default function DashboardPage() {
               </div>
             </TabsContent>
           </Tabs>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <DollarSign className="h-5 w-5 text-green-500" />
-                  Financial Summary
-                </CardTitle>
-                <CardDescription>Today's financial overview</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-green-800">Collected Today</span>
-                    <TrendingUp className="h-4 w-4 text-green-600" />
-                  </div>
-                  <span className="text-2xl font-medium text-green-800">₹15,000</span>
-                  <Progress value={75} className="mt-2 h-2 bg-green-100" />
-                  <p className="text-xs text-green-700 mt-1">75% of daily target</p>
-                </div>
-                <div className="p-4 bg-gradient-to-r from-red-50 to-rose-50 rounded-lg border border-red-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-red-800">Outstanding</span>
-                    <AlertCircle className="h-4 w-4 text-red-600" />
-                  </div>
-                  <span className="text-2xl font-medium text-red-800">₹2,500</span>
-                  <p className="text-xs text-red-700 mt-1">3 pending payments</p>
-                </div>
-                <div className="pt-2 border-t">
-                  <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                    <Target className="h-4 w-4" />
-                    Revenue Breakdown
-                  </h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground flex items-center gap-2">
-                        <Users className="h-3 w-3 text-green-500" />
-                        In-Clinic
-                      </span>
-                      <span className="font-semibold">₹10,000</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground flex items-center gap-2">
-                        <Video className="h-3 w-3 text-blue-500" />
-                        Video Calls
-                      </span>
-                      <span className="font-semibold">₹5,000</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground flex items-center gap-2">
-                        <Syringe className="h-3 w-3 text-purple-500" />
-                        Procedures
-                      </span>
-                      <span className="font-semibold">₹0</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-2 pt-2">
-                  <Button variant="outline" size="sm" className="flex-1" asChild>
-                    <Link href="/dashboard/billing">
-                      <FileText className="h-3 w-3 mr-2" />
-                      Billing
-                    </Link>
-                  </Button>
-                  <Button variant="outline" size="sm" className="flex-1" asChild>
-                    <Link href="/dashboard/reports">
-                      <Download className="h-3 w-3 mr-2" />
-                      Reports
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-blue-600" />
-                  Quick Actions
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button variant="outline" size="sm" className="h-auto flex-col py-3 gap-2" asChild>
-                    <Link href="/dashboard/appointments/new">
-                      <Calendar className="h-5 w-5" />
-                      <span className="text-xs">New Appointment</span>
-                    </Link>
-                  </Button>
-                  <Button variant="outline" size="sm" className="h-auto flex-col py-3 gap-2" asChild>
-                    <Link href="/dashboard/patients/new">
-                      <UserPlus className="h-5 w-5" />
-                      <span className="text-xs">Add Patient</span>
-                    </Link>
-                  </Button>
-                  <Button variant="outline" size="sm" className="h-auto flex-col py-3 gap-2" asChild>
-                    <Link href="/dashboard/prescriptions/new">
-                      <Pill className="h-5 w-5" />
-                      <span className="text-xs">New Prescription</span>
-                    </Link>
-                  </Button>
-                  <Button variant="outline" size="sm" className="h-auto flex-col py-3 gap-2" asChild>
-                    <Link href="/dashboard/reports/generate">
-                      <FileText className="h-5 w-5" />
-                      <span className="text-xs">Generate Report</span>
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
         </div>
         <div className="space-y-6">
           <Card className="bg-white">
@@ -1217,7 +1077,12 @@ export default function DashboardPage() {
                         <p className="font-semibold text-sm">{msg.patientName}</p>
                         <p className="text-sm text-amber-700 truncate">{msg.subject}</p>
                         <div className="flex gap-2 mt-2">
-                          <Button variant="success" size="sm" className="flex-1 h-8" onClick={() => handleApproveRefill(msg.id, msg.taskId)}>
+                          <Button 
+                            variant="secondary" 
+                            size="sm" 
+                            className="flex-1 h-8 bg-green-600 text-white hover:bg-green-700" 
+                            onClick={() => handleApproveRefill(msg.id, msg.taskId)}
+                          >
                             <Check className="h-3 w-3 mr-1.5" /> Approve
                           </Button>
                           <Button variant="outline" size="sm" className="flex-1 h-8">
@@ -1294,7 +1159,7 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="">
+          <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Pill className="h-5 w-5 text-red-500" />
@@ -1319,36 +1184,6 @@ export default function DashboardPage() {
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-          <Card className="">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CalendarClock className="h-5 w-5 text-purple-500" />
-                Upcoming Follow-ups
-              </CardTitle>
-              <CardDescription>Scheduled follow-up appointments</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {mockUpcomingFollowUps.map((followUp, index) => (
-                  <div key={index} className="p-3 rounded-lg border border-purple-100 bg-purple-50/50 hover:bg-purple-100 transition-colors">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="font-medium text-sm">{followUp.patient}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{followUp.reason}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs font-semibold text-purple-700">{followUp.date}</p>
-                        <p className="text-xs text-muted-foreground">{followUp.time}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <Button variant="outline" className="w-full mt-4" asChild>
-                <Link href="/dashboard/follow-ups">View All Follow-ups</Link>
-              </Button>
             </CardContent>
           </Card>
         </div>
