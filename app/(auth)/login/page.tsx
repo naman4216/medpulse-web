@@ -18,38 +18,42 @@ export default function LoginPage() {
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    try {
-      const res = await fetch('http://127.0.0.1:8000/api/login/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,        // UPDATED
-          password: password,
-        }),
-      });
+    // TODO: Uncomment API call later
+    // try {
+    //   const res = await fetch('http://127.0.0.1:8000/api/login/', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //       email: email,        // UPDATED
+    //       password: password,
+    //     }),
+    //   });
 
-      const data = await res.json();
+    //   const data = await res.json();
 
-      if (res.ok) {
-        // Save tokens
-        localStorage.setItem('accessToken', data.access);
-        localStorage.setItem('refreshToken', data.refresh);
-        localStorage.setItem('userType', data.user_type);
+    //   if (res.ok) {
+    //     // Save tokens
+    //     localStorage.setItem('accessToken', data.access);
+    //     localStorage.setItem('refreshToken', data.refresh);
+    //     localStorage.setItem('userType', data.user_type);
 
-        console.log("Login Successful:", data.user_type);
+    //     console.log("Login Successful:", data.user_type);
 
-        // Redirect
-        router.push('/dashboard');
+    //     // Redirect
+    //     router.push('/dashboard');
 
-      } else {
-        alert("Login Failed: " + (data.detail || JSON.stringify(data)));
-      }
-    } catch (error) {
-      console.error("Network Error:", error);
-      alert("Something went wrong connecting to the server.");
-    }
+    //   } else {
+    //     alert("Login Failed: " + (data.detail || JSON.stringify(data)));
+    //   }
+    // } catch (error) {
+    //   console.error("Network Error:", error);
+    //   alert("Something went wrong connecting to the server.");
+    // }
+
+    // Temporary: Direct redirect to dashboard
+    router.push('/dashboard');
   };
 
   return (
