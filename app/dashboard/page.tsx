@@ -643,7 +643,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </Link>
-        <Link href="/dashboard/labs">
+        <Link href="/dashboard/patients?filter=labs">
           <Card className="transition-all hover:shadow-lg hover:border-purple-300 cursor-pointer">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Pending Labs</CardTitle>
@@ -785,7 +785,7 @@ export default function DashboardPage() {
                         </div>
                         <div className="flex flex-col gap-2">
                           <Button size="sm" className="bg-blue-600 hover:bg-blue-700" asChild>
-                            <Link href={patient.type === "Video Call" ? `/dashboard/video/${patient.id}` : `/dashboard/consult/${patient.id}`}>
+                            <Link href={patient.type === "Video Call" ? `/dashboard/messages?patient=${patient.id}&video=true` : `/dashboard/messages?patient=${patient.id}`}>
                               {patient.type === 'Video Call' ? (
                                 <Video className="h-4 w-4 mr-2" />
                               ) : (
@@ -798,6 +798,12 @@ export default function DashboardPage() {
                             <Link href={`/dashboard/patients/${patient.id}/chart`}>
                               <FileText className="h-4 w-4 mr-2" />
                               Chart
+                            </Link>
+                          </Button>
+                          <Button size="sm" variant="outline" asChild>
+                            <Link href={`/dashboard/messages?patient=${patient.id}`}>
+                              <MessageSquare className="h-4 w-4 mr-2" />
+                              Message
                             </Link>
                           </Button>
                         </div>

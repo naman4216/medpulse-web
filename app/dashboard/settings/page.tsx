@@ -1,4 +1,7 @@
 // File: app/dashboard/settings/page.tsx
+"use client";
+
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -13,6 +16,34 @@ import { Textarea } from "@/components/ui/textarea";
 import { Bell, CreditCard, Download, KeyRound, User, Shield } from "lucide-react";
 
 export default function SettingsPage() {
+  const [doctor, setDoctor] = useState({
+    name: "Dr. Priya Sharma",
+    qualification: "cardiologist",
+    registration: "MH-123456",
+    clinic: "Healthcare Pro Clinic",
+    phone: "+91 98765 43200",
+    email: "dr.priya.sharma@healthcarepro.com"
+  });
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('doctorProfile');
+      if (raw) setDoctor(JSON.parse(raw));
+    } catch (e) {
+      // ignore
+    }
+  }, []);
+
+  const saveDoctor = () => {
+    try {
+      localStorage.setItem('doctorProfile', JSON.stringify(doctor));
+      alert('Doctor profile saved');
+    } catch (e) {
+      console.error(e);
+      alert('Failed to save profile');
+    }
+  };
+
   return (
     <div className="flex flex-col space-y-6">
       <div>
@@ -51,17 +82,17 @@ export default function SettingsPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="name">Full Name</Label>
-                  <Input id="name" defaultValue="Dr. Priya Sharma" />
+                  <Input id="name" value={doctor.name} onChange={(e) => setDoctor(prev => ({ ...prev, name: e.target.value }))} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
-                  <Input id="email" type="email" defaultValue="dr.priya.sharma@healthcarepro.com" readOnly />
+                  <Input id="email" type="email" value={doctor.email} onChange={(e) => setDoctor(prev => ({ ...prev, email: e.target.value }))} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="specialization">Specialization</Label>
-                  <Select defaultValue="cardiologist">
+                  <Label htmlFor="specialization">Qualification</Label>
+                  <Select value={doctor.qualification} onValueChange={(val) => setDoctor(prev => ({ ...prev, qualification: val }))}>
                     <SelectTrigger id="specialization">
-                      <SelectValue placeholder="Select specialization" />
+                      <SelectValue placeholder="Select qualification" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="cardiologist">Cardiologist</SelectItem>
@@ -73,7 +104,15 @@ export default function SettingsPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="license">Medical License Number</Label>
-                  <Input id="license" defaultValue="MH-123456" />
+                  <Input id="license" value={doctor.registration} onChange={(e) => setDoctor(prev => ({ ...prev, registration: e.target.value }))} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="clinic">Clinic / Hospital</Label>
+                  <Input id="clinic" value={doctor.clinic} onChange={(e) => setDoctor(prev => ({ ...prev, clinic: e.target.value }))} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone</Label>
+                  <Input id="phone" value={doctor.phone} onChange={(e) => setDoctor(prev => ({ ...prev, phone: e.target.value }))} />
                 </div>
               </div>
                <div className="space-y-2">
@@ -82,7 +121,7 @@ export default function SettingsPage() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button>Save Changes</Button>
+              <Button onClick={saveDoctor}>Save Changes</Button>
             </CardFooter>
           </Card>
         </TabsContent>

@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -36,6 +36,14 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userType');
+    router.push('/login');
+  };
 
   return (
     // This code is correct. The `sticky` and `h-screen` properties
@@ -98,7 +106,7 @@ export function Sidebar() {
             </DropdownMenuItem>
             <DropdownMenuItem disabled>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-500 focus:text-red-500 focus:bg-red-50 cursor-pointer">
+            <DropdownMenuItem className="text-red-500 focus:text-red-500 focus:bg-red-50 cursor-pointer" onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4"/>
                 Log out
             </DropdownMenuItem>

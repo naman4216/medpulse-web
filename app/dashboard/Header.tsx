@@ -1,4 +1,8 @@
 // File: components/dashboard/Header.tsx
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,11 +22,44 @@ import Link from "next/link";
 // --- DUMMY DATA FOR NOTIFICATIONS ---
 // In a real app, this would come from a global state or API
 const notifications = [
-    { type: "Urgent Message", description: "Rohan Verma: 'Experiencing chest pain...'", link: "/dashboard/messages/2" },
-    { type: "Lab Results", description: "Review blood test for Anjali Singh.", link: "/dashboard/patients/1/labs" },
+    { type: "Urgent Message", description: "Rohan Verma: 'Experiencing chest pain...'", link: "/dashboard/messages?patient=2" },
+    { type: "Lab Results", description: "Review blood test for Anjali Singh.", link: "/dashboard/patients/4/chart?tab=labs" },
 ];
 
 export function Header() {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/dashboard/patients?search=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userType');
+    router.push('/login');
+  };
+
+  const handleNewAppointment = () => {
+    router.push('/dashboard/appointments');
+    setTimeout(() => {
+      const newBtn = document.querySelector('[data-new-appointment]') as HTMLElement;
+      if (newBtn) newBtn.click();
+    }, 100);
+  };
+
+  const handleNewPatient = () => {
+    router.push('/dashboard/patients');
+    setTimeout(() => {
+      const newBtn = document.querySelector('[data-new-patient]') as HTMLElement;
+      if (newBtn) newBtn.click();
+    }, 100);
+  };
+
   return (
     // ✨ Changed to justify-end to shift all content to the right
     <header className="sticky top-0 z-30 flex h-16 items-center justify-end gap-4 border-b bg-background/80 px-4 backdrop-blur-lg sm:px-6">
@@ -30,13 +67,15 @@ export function Header() {
       {/* Container for all controls, aligned to the right */}
       <div className="flex items-center gap-2 md:gap-4">
         {/* Search Bar */}
-        <div className="relative">
+        <form onSubmit={handleSearch} className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search patients..."
             className="w-full md:w-[200px] lg:w-[300px] rounded-full pl-9"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
-        </div>
+        </form>
 
         {/* Quick Add Dropdown */}
         <DropdownMenu>
@@ -49,17 +88,13 @@ export function Header() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Create New</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/dashboard/appointments/new" className="flex items-center gap-2 cursor-pointer">
-                <PlusCircle className="h-4 w-4" />
-                <span>New Appointment</span>
-              </Link>
+            <DropdownMenuItem onClick={handleNewAppointment}>
+              <PlusCircle className="h-4 w-4 mr-2" />
+              <span>New Appointment</span>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-               <Link href="/dashboard/patients/register" className="flex items-center gap-2 cursor-pointer">
-                <UserPlus className="h-4 w-4" />
-                <span>Register Patient</span>
-              </Link>
+            <DropdownMenuItem onClick={handleNewPatient}>
+              <UserPlus className="h-4 w-4 mr-2" />
+              <span>Register Patient</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -95,8 +130,8 @@ export function Header() {
                 ))}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="justify-center text-sm text-primary hover:underline cursor-pointer">
-              <Link href="/dashboard/notifications">View all notifications</Link>
+            <DropdownMenuItem className="justify-center text-sm text-primary hover:underline cursor-pointer" asChild>
+              <Link href="/dashboard/messages">View all messages</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -115,10 +150,9 @@ export function Header() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Dr. Sharma</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild><Link href="/dashboard/profile" className="cursor-pointer">Profile</Link></DropdownMenuItem>
             <DropdownMenuItem asChild><Link href="/dashboard/settings" className="cursor-pointer">Settings</Link></DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">Log out</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

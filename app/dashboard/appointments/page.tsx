@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, type FC, type ReactNode } from "react";
+import { useState, useMemo, useEffect, type FC, type ReactNode } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge, type BadgeProps } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ import {
   MapPin, Pill, Activity, History, Star, DollarSign, Copy,
   CalendarDays, Timer, AlertTriangle, ChevronRight, Grid3x3, List, Printer
 } from "lucide-react";
+import Link from "next/link";
 
 
 //=========== 1. TYPE DEFINITIONS ===========//
@@ -30,6 +31,7 @@ type AppointmentType = "Consultation" | "Follow-up" | "Telemedicine" | "New Pati
 type AppointmentPriority = "normal" | "high" | "urgent";
 
 interface AppointmentPatient {
+  id?: number;
   name: string;
   avatar: string;
   phone: string;
@@ -80,14 +82,14 @@ interface RescheduleState {
 //=========== 2. INITIAL DATA ===========//
 
 const initialAppointments: Appointment[] = [
-  { id: "APT001", patient: { name: "Rohan Verma", avatar: "/avatars/01.png", phone: "+91 98765 43210", email: "rohan.v@email.com", age: 32, gender: "Male", bloodGroup: "O+", lastVisit: "2025-09-15" }, date: "2025-10-30", time: "10:00 AM", type: "Consultation", status: "Confirmed", reason: "Annual checkup", duration: 30, notes: "Patient has history of hypertension", checkedIn: false, priority: "normal", fee: 500 },
-  { id: "APT002", patient: { name: "Anjali Singh", avatar: "/avatars/02.png", phone: "+91 98765 43211", email: "anjali.s@email.com", age: 28, gender: "Female", bloodGroup: "A+", lastVisit: "2025-10-15" }, date: "2025-10-30", time: "11:30 AM", type: "Follow-up", status: "Scheduled", reason: "Blood test results review", duration: 20, notes: "Follow-up for recent lab work", checkedIn: false, priority: "normal", fee: 300 },
-  { id: "APT003", patient: { name: "Amit Kumar", avatar: "/avatars/05.png", phone: "+91 98765 43212", email: "amit.k@email.com", age: 45, gender: "Male", bloodGroup: "B+", lastVisit: "2025-10-20" }, date: "2025-10-31", time: "02:00 PM", type: "Telemedicine", status: "Scheduled", reason: "Diabetes management consultation", duration: 30, notes: "Regular diabetes check-in", checkedIn: false, priority: "high", fee: 400 },
-  { id: "APT004", patient: { name: "Sneha Patel", avatar: "/avatars/04.png", phone: "+91 98765 43213", email: "sneha.p@email.com", age: 35, gender: "Female", bloodGroup: "AB+", lastVisit: "2025-11-01" }, date: "2025-11-01", time: "09:00 AM", type: "New Patient", status: "Completed", reason: "Initial consultation", duration: 45, notes: "First time patient", checkedIn: true, priority: "normal", fee: 800 },
-  { id: "APT005", patient: { name: "Vikram Reddy", avatar: "/avatars/03.png", phone: "+91 98765 43214", email: "vikram.r@email.com", age: 52, gender: "Male", bloodGroup: "O-", lastVisit: "2025-09-10" }, date: "2025-11-02", time: "03:30 PM", type: "Consultation", status: "Canceled", reason: "Back pain assessment", duration: 30, notes: "Patient cancelled due to emergency", checkedIn: false, priority: "normal", fee: 500 },
-  { id: "APT006", patient: { name: "Priya Sharma", avatar: "/avatars/01.png", phone: "+91 98765 43215", email: "priya.s@email.com", age: 29, gender: "Female", bloodGroup: "B-", lastVisit: "2025-10-25" }, date: "2025-10-30", time: "02:00 PM", type: "Follow-up", status: "Confirmed", reason: "Post-surgery checkup", duration: 25, notes: "Post-operative review", checkedIn: false, priority: "high", fee: 600 },
-  { id: "APT007", patient: { name: "Rahul Mehta", avatar: "/avatars/02.png", phone: "+91 98765 43216", email: "rahul.m@email.com", age: 38, gender: "Male", bloodGroup: "A-", lastVisit: "2025-08-20" }, date: "2025-10-31", time: "10:30 AM", type: "Consultation", status: "Pending", reason: "Chest pain evaluation", duration: 30, notes: "Requires urgent attention", checkedIn: false, priority: "urgent", fee: 500 },
-  { id: "APT008", patient: { name: "Neha Gupta", avatar: "/avatars/03.png", phone: "+91 98765 43217", email: "neha.g@email.com", age: 41, gender: "Female", bloodGroup: "O+", lastVisit: "2025-10-10" }, date: "2025-11-03", time: "11:00 AM", type: "Telemedicine", status: "Scheduled", reason: "Prescription refill", duration: 15, notes: "Routine prescription renewal", checkedIn: false, priority: "normal", fee: 250 },
+  { id: "APT001", patient: { id: 1, name: "Rohan Verma", avatar: "/avatars/01.png", phone: "+91 98765 43210", email: "rohan.v@email.com", age: 32, gender: "Male", bloodGroup: "O+", lastVisit: "2025-09-15" }, date: "2025-10-30", time: "10:00 AM", type: "Consultation", status: "Confirmed", reason: "Annual checkup", duration: 30, notes: "Patient has history of hypertension", checkedIn: false, priority: "normal", fee: 500 },
+  { id: "APT002", patient: { id: 2, name: "Anjali Singh", avatar: "/avatars/02.png", phone: "+91 98765 43211", email: "anjali.s@email.com", age: 28, gender: "Female", bloodGroup: "A+", lastVisit: "2025-10-15" }, date: "2025-10-30", time: "11:30 AM", type: "Follow-up", status: "Scheduled", reason: "Blood test results review", duration: 20, notes: "Follow-up for recent lab work", checkedIn: false, priority: "normal", fee: 300 },
+  { id: "APT003", patient: { id: 3, name: "Amit Kumar", avatar: "/avatars/05.png", phone: "+91 98765 43212", email: "amit.k@email.com", age: 45, gender: "Male", bloodGroup: "B+", lastVisit: "2025-10-20" }, date: "2025-10-31", time: "02:00 PM", type: "Telemedicine", status: "Scheduled", reason: "Diabetes management consultation", duration: 30, notes: "Regular diabetes check-in", checkedIn: false, priority: "high", fee: 400 },
+  { id: "APT004", patient: { id: 4, name: "Sneha Patel", avatar: "/avatars/04.png", phone: "+91 98765 43213", email: "sneha.p@email.com", age: 35, gender: "Female", bloodGroup: "AB+", lastVisit: "2025-11-01" }, date: "2025-11-01", time: "09:00 AM", type: "New Patient", status: "Completed", reason: "Initial consultation", duration: 45, notes: "First time patient", checkedIn: true, priority: "normal", fee: 800 },
+  { id: "APT005", patient: { id: 3, name: "Vikram Reddy", avatar: "/avatars/03.png", phone: "+91 98765 43214", email: "vikram.r@email.com", age: 52, gender: "Male", bloodGroup: "O-", lastVisit: "2025-09-10" }, date: "2025-11-02", time: "03:30 PM", type: "Consultation", status: "Canceled", reason: "Back pain assessment", duration: 30, notes: "Patient cancelled due to emergency", checkedIn: false, priority: "normal", fee: 500 },
+  { id: "APT006", patient: { id: 6, name: "Priya Sharma", avatar: "/avatars/01.png", phone: "+91 98765 43215", email: "priya.s@email.com", age: 29, gender: "Female", bloodGroup: "B-", lastVisit: "2025-10-25" }, date: "2025-10-30", time: "02:00 PM", type: "Follow-up", status: "Confirmed", reason: "Post-surgery checkup", duration: 25, notes: "Post-operative review", checkedIn: false, priority: "high", fee: 600 },
+  { id: "APT007", patient: { id: 7, name: "Rahul Mehta", avatar: "/avatars/02.png", phone: "+91 98765 43216", email: "rahul.m@email.com", age: 38, gender: "Male", bloodGroup: "A-", lastVisit: "2025-08-20" }, date: "2025-10-31", time: "10:30 AM", type: "Consultation", status: "Pending", reason: "Chest pain evaluation", duration: 30, notes: "Requires urgent attention", checkedIn: false, priority: "urgent", fee: 500 },
+  { id: "APT008", patient: { id: 8, name: "Neha Gupta", avatar: "/avatars/03.png", phone: "+91 98765 43217", email: "neha.g@email.com", age: 41, gender: "Female", bloodGroup: "O+", lastVisit: "2025-10-10" }, date: "2025-11-03", time: "11:00 AM", type: "Telemedicine", status: "Scheduled", reason: "Prescription refill", duration: 15, notes: "Routine prescription renewal", checkedIn: false, priority: "normal", fee: 250 },
 ];
 
 const initialNewAppointmentState: NewAppointmentState = {
@@ -129,6 +131,14 @@ const getPriorityBadge = (priority: AppointmentPriority): ReactNode => {
 
 export default function AppointmentsPage() {
   const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
+  
+  // Handle new appointment trigger from URL or other pages
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('new') === 'true') {
+      setIsNewAppointmentOpen(true);
+    }
+  }, []);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
@@ -223,7 +233,7 @@ export default function AppointmentsPage() {
     <div className="space-y-6 p-6 max-w-[1600px] mx-auto">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div><h1 className="text-3xl font-medium tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Appointments</h1><p className="text-muted-foreground pt-1">Comprehensive scheduling and patient management system</p></div>
-        <div className="flex gap-2 flex-wrap"><Button variant="outline" size="sm"><Download className="h-4 w-4 mr-2" />Export</Button><Button variant="outline" size="sm"><Printer className="h-4 w-4 mr-2" />Print</Button><Button onClick={() => setIsNewAppointmentOpen(true)} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"><PlusCircle className="h-4 w-4 mr-2" />New Appointment</Button></div>
+        <div className="flex gap-2 flex-wrap"><Button variant="outline" size="sm"><Download className="h-4 w-4 mr-2" />Export</Button><Button variant="outline" size="sm"><Printer className="h-4 w-4 mr-2" />Print</Button><Button data-new-appointment onClick={() => setIsNewAppointmentOpen(true)} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"><PlusCircle className="h-4 w-4 mr-2" />New Appointment</Button></div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
@@ -271,8 +281,24 @@ export default function AppointmentsPage() {
                     <div className="flex items-center gap-3">
                       <div className="text-center hidden md:block"><div className="text-xs text-muted-foreground mb-1">Status</div><Badge variant={getStatusBadgeVariant(apt.status)} className="flex items-center gap-1">{getStatusIcon(apt.status)}{apt.status}</Badge></div>
                       <DropdownMenu><DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}><Button variant="ghost" size="icon" className="shrink-0"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuContent align="end" className="w-56">
                           <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleViewDetails(apt); }}><User className="mr-2 h-4 w-4" />View Details</DropdownMenuItem>
+                          <DropdownMenuItem asChild onClick={(e) => e.stopPropagation()}>
+                            <Link href={`/dashboard/patients/${apt.patient.id || apt.id.replace('APT', '')}/chart`}>
+                              <FileText className="mr-2 h-4 w-4" />View Patient Chart
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild onClick={(e) => e.stopPropagation()}>
+                            <Link href={`/dashboard/messages?patient=${apt.patient.id || apt.id.replace('APT', '')}`}>
+                              <MessageSquare className="mr-2 h-4 w-4" />Send Message
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild onClick={(e) => e.stopPropagation()}>
+                            <Link href={`/dashboard/prescriptions?patient=PAT${String(apt.patient.id || apt.id.replace('APT', '')).padStart(3, '0')}`}>
+                              <Pill className="mr-2 h-4 w-4" />Add Prescription
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
                           {!apt.checkedIn && apt.status !== "Completed" && apt.status !== "Canceled" && (<DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCheckIn(apt.id); }}><CheckCircle className="mr-2 h-4 w-4 text-green-600" />Check In</DropdownMenuItem>)}
                           {apt.status === "Pending" || apt.status === "Scheduled" ? (<DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleConfirm(apt.id); }}><Check className="mr-2 h-4 w-4 text-blue-600" />Confirm</DropdownMenuItem>) : null}
                           {apt.status === "Confirmed" || apt.checkedIn ? (<DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleComplete(apt.id); }}><CheckCircle className="mr-2 h-4 w-4 text-green-600" />Mark Complete</DropdownMenuItem>) : null}

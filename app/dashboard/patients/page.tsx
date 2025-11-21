@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo, type FC } from "react";
+import { useState, useMemo, useEffect, type FC } from "react";
+import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -160,7 +161,6 @@ const PatientsPage: FC = () => {
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
   const [genderFilter, setGenderFilter] = useState<string>("all");
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-  const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
   const [isNewPatientOpen, setIsNewPatientOpen] = useState<boolean>(false);
   const [isScheduleOpen, setIsScheduleOpen] = useState<boolean>(false);
@@ -177,6 +177,17 @@ const PatientsPage: FC = () => {
   const [appointmentData, setAppointmentData] = useState<AppointmentState>({ date: "", time: "", type: "Consultation", reason: "" });
   const [prescriptionData, setPrescriptionData] = useState<PrescriptionState>({ medication: "", dosage: "", frequency: "", duration: "", notes: "" });
   const [messageData, setMessageData] = useState<MessageState>({ subject: "", message: "", sendVia: "email" });
+
+  const router = useRouter();
+
+  // Handle search query from URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchParam = urlParams.get('search');
+    if (searchParam) {
+      setSearchQuery(searchParam);
+    }
+  }, []);
 
   const filteredAndSortedPatients = useMemo(() => {
     let filtered = patients.filter(patient => {
@@ -229,8 +240,12 @@ const PatientsPage: FC = () => {
   }, [patients]);
 
   const handleViewProfile = (patient: Patient) => {
-    setSelectedPatient(patient);
-    setIsProfileOpen(true);
+    // In a real Next.js app, you would use the useRouter hook for navigation.
+    // Example:
+    // import { useRouter } from 'next/navigation';
+    // const router = useRouter();
+    // router.push(`/dashboard/patients/${patient.id}/chart`);
+    window.location.href = `/dashboard/patients/${patient.id}/chart`;
   };
 
   const handleEditPatient = (patient: Patient) => {
@@ -252,9 +267,12 @@ const PatientsPage: FC = () => {
   };
 
   const handleAddPrescription = (patient: Patient) => {
+    // Set selected patient locally (keeps UI state consistent if needed)
     setSelectedPatient(patient);
     setPrescriptionData({ medication: "", dosage: "", frequency: "", duration: "", notes: "" });
-    setIsAddPrescriptionOpen(true);
+    // Navigate to the dedicated prescription page and pass patient id as a query param
+    // The prescriptions screen can read the query param and pre-fill patient context
+    router.push(`/dashboard/prescriptions?patient=${encodeURIComponent(patient.id)}`);
   };
 
   const handleAddLabReport = (patient: Patient) => {
@@ -360,7 +378,7 @@ const PatientsPage: FC = () => {
         <div className="flex gap-2 flex-wrap">
           <Button variant="outline" size="sm" onClick={exportPatientData}><Download className="h-4 w-4 mr-2" />Export</Button>
           <Button variant="outline" size="sm"><Printer className="h-4 w-4 mr-2" />Print</Button>
-          <Button onClick={() => setIsNewPatientOpen(true)} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"><PlusCircle className="h-4 w-4 mr-2" />Add New Patient</Button>
+          <Button data-new-patient onClick={() => setIsNewPatientOpen(true)} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"><PlusCircle className="h-4 w-4 mr-2" />Add New Patient</Button>
         </div>
       </div>
 
@@ -442,7 +460,7 @@ const PatientsPage: FC = () => {
                     <DropdownMenu><DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}><Button variant="ghost" size="icon" className="shrink-0"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-56">
                         <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleViewProfile(patient); }}><FileText className="mr-2 h-4 w-4" />View Full Profile</DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleViewProfile(patient); }}><FileText className="mr-2 h-4 w-4" />View Patient Chart</DropdownMenuItem>
                         <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleScheduleAppointment(patient); }}><CalendarPlus className="mr-2 h-4 w-4" />Schedule Appointment</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleAddPrescription(patient); }}><Pill className="mr-2 h-4 w-4" />Add Prescription</DropdownMenuItem>
@@ -483,45 +501,6 @@ const PatientsPage: FC = () => {
           {totalPages > 1 && (<div className="flex items-center justify-center gap-2 mt-6"><Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))} disabled={currentPage === 1}><ChevronLeft className="h-4 w-4 mr-1" />Previous</Button><span className="text-sm text-muted-foreground px-4">Page {currentPage} of {totalPages}</span><Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))} disabled={currentPage === totalPages}>Next<ChevronRight className="h-4 w-4 ml-1" /></Button></div>)}
         </>
       )}
-
-      <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>Patient Profile</DialogTitle><DialogDescription>Complete medical record and patient information</DialogDescription></DialogHeader>
-          {selectedPatient && (
-            <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="grid w-full grid-cols-5"><TabsTrigger value="overview">Overview</TabsTrigger><TabsTrigger value="medical">Medical</TabsTrigger><TabsTrigger value="appointments">Appointments</TabsTrigger><TabsTrigger value="prescriptions">Prescriptions</TabsTrigger><TabsTrigger value="billing">Billing</TabsTrigger></TabsList>
-              <TabsContent value="overview" className="space-y-4 mt-4">
-                <div className="flex items-start gap-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg"><Avatar className="h-20 w-20 ring-4 ring-blue-200"><AvatarImage src={selectedPatient.avatar} /><AvatarFallback className="text-2xl">{selectedPatient.name.charAt(0)}</AvatarFallback></Avatar><div className="flex-1"><h3 className="text-2xl font-semibold">{selectedPatient.name}</h3><p className="text-muted-foreground">{selectedPatient.id}</p><div className="flex items-center gap-2 mt-2"><Badge variant={selectedPatient.status === 'Active' ? 'default' : 'outline'}>{selectedPatient.status}</Badge>{selectedPatient.priority === "high" && (<Badge variant="outline" className="border-orange-500 text-orange-700">High Priority</Badge>)}<div className="flex items-center gap-1">{[...Array(5)].map((_, i) => (<Star key={i} className={`h-4 w-4 ${i < selectedPatient.rating ? "fill-amber-400 text-amber-400" : "text-gray-300"}`} />))}</div></div></div><div className="flex flex-col gap-2"><Button size="sm" onClick={() => handleScheduleAppointment(selectedPatient)}><CalendarPlus className="h-4 w-4 mr-2" />Schedule</Button><Button size="sm" variant="outline" onClick={() => handleSendMessage(selectedPatient)}><MessageSquare className="h-4 w-4 mr-2" />Message</Button></div></div>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-4"><h4 className="font-semibold text-lg flex items-center gap-2"><User className="h-5 w-5" />Personal Information</h4><div className="space-y-3"><div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg"><Cake className="h-5 w-5 text-muted-foreground mt-0.5" /><div className="flex-1"><p className="text-sm text-muted-foreground">Age & Gender</p><p className="font-medium">{selectedPatient.age} years • {selectedPatient.gender}</p></div></div><div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg"><Activity className="h-5 w-5 text-red-500 mt-0.5" /><div className="flex-1"><p className="text-sm text-muted-foreground">Blood Group</p><p className="font-medium text-red-600">{selectedPatient.bloodGroup}</p></div></div><div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg"><MapPin className="h-5 w-5 text-muted-foreground mt-0.5" /><div className="flex-1"><p className="text-sm text-muted-foreground">Address</p><p className="font-medium">{selectedPatient.address}</p></div></div></div></div>
-                  <div className="space-y-4"><h4 className="font-semibold text-lg flex items-center gap-2"><Phone className="h-5 w-5" />Contact Information</h4><div className="space-y-3"><div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg"><Phone className="h-5 w-5 text-blue-600 mt-0.5" /><div className="flex-1"><p className="text-sm text-muted-foreground">Phone</p><p className="font-medium">{selectedPatient.phone}</p></div><Button size="sm" variant="outline"><Phone className="h-3 w-3" /></Button></div><div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg"><Mail className="h-5 w-5 text-blue-600 mt-0.5" /><div className="flex-1"><p className="text-sm text-muted-foreground">Email</p><p className="font-medium">{selectedPatient.email}</p></div><Button size="sm" variant="outline"><Mail className="h-3 w-3" /></Button></div><div className="p-3 bg-amber-50 rounded-lg border border-amber-200"><p className="text-sm font-semibold text-amber-800 mb-2">Emergency Contact</p><div className="space-y-1 text-sm"><p className="font-medium">{selectedPatient.emergencyContact.name}</p><p className="text-muted-foreground">{selectedPatient.emergencyContact.relation}</p><p className="text-muted-foreground">{selectedPatient.emergencyContact.phone}</p></div></div></div></div>
-                </div>
-                <div className="space-y-3 border-t pt-4"><h4 className="font-semibold text-lg flex items-center gap-2"><Heart className="h-5 w-5" />Vital Statistics</h4><div className="grid grid-cols-2 md:grid-cols-4 gap-3"><div className="p-3 bg-green-50 rounded-lg border border-green-200 text-center"><div className="text-2xl font-medium text-green-600">{selectedPatient.vitals.height}</div><div className="text-xs text-muted-foreground">Height</div></div><div className="p-3 bg-blue-50 rounded-lg border border-blue-200 text-center"><div className="text-2xl font-medium text-blue-600">{selectedPatient.vitals.weight}</div><div className="text-xs text-muted-foreground">Weight</div></div><div className="p-3 bg-purple-50 rounded-lg border border-purple-200 text-center"><div className="text-2xl font-medium text-purple-600">{selectedPatient.vitals.bmi}</div><div className="text-xs text-muted-foreground">BMI</div></div><div className="p-3 bg-red-50 rounded-lg border border-red-200 text-center"><div className="text-2xl font-medium text-red-600">{selectedPatient.vitals.bp}</div><div className="text-xs text-muted-foreground">BP</div></div></div></div>
-                {selectedPatient.insurance.provider && (<div className="space-y-3 border-t pt-4"><h4 className="font-semibold text-lg flex items-center gap-2"><FileCheck className="h-5 w-5" />Insurance Information</h4><div className="p-4 bg-indigo-50 rounded-lg border border-indigo-200"><div className="grid md:grid-cols-3 gap-4"><div><p className="text-sm text-muted-foreground">Provider</p><p className="font-semibold">{selectedPatient.insurance.provider}</p></div><div><p className="text-sm text-muted-foreground">Policy Number</p><p className="font-semibold">{selectedPatient.insurance.policyNo}</p></div><div><p className="text-sm text-muted-foreground">Valid Until</p><p className="font-semibold">{selectedPatient.insurance.validUntil}</p></div></div></div></div>)}
-              </TabsContent>
-              <TabsContent value="medical" className="space-y-4 mt-4">
-                <div className="space-y-3"><h4 className="font-semibold flex items-center gap-2"><FileText className="h-5 w-5" />Medical History</h4><p className="text-sm p-4 bg-slate-50 rounded-lg border whitespace-pre-line">{selectedPatient.medicalHistory}</p></div>
-                {selectedPatient.conditions.length > 0 && (<div className="space-y-3 border-t pt-4"><h4 className="font-semibold flex items-center gap-2"><Heart className="h-5 w-5 text-red-500" />Current Conditions</h4><div className="flex flex-wrap gap-2">{selectedPatient.conditions.map((condition, idx) => (<Badge key={idx} variant="outline" className="border-red-300 text-red-700">{condition}</Badge>))}</div></div>)}
-                {selectedPatient.medications.length > 0 && (<div className="space-y-3 border-t pt-4"><h4 className="font-semibold flex items-center gap-2"><Pill className="h-5 w-5 text-purple-500" />Current Medications</h4><div className="space-y-2">{selectedPatient.medications.map((medication, idx) => (<div key={idx} className="p-3 bg-purple-50 rounded-lg border border-purple-200"><p className="font-medium">{medication}</p></div>))}</div></div>)}
-                {selectedPatient.allergies.length > 0 && (<div className="space-y-3 border-t pt-4"><h4 className="font-semibold flex items-center gap-2"><AlertCircle className="h-5 w-5 text-amber-500" />Allergies</h4><div className="flex flex-wrap gap-2">{selectedPatient.allergies.map((allergy, idx) => (<Badge key={idx} variant="outline" className="border-amber-500 text-amber-700">{allergy}</Badge>))}</div></div>)}
-              </TabsContent>
-              <TabsContent value="appointments" className="space-y-4 mt-4">
-                <div className="grid grid-cols-4 gap-4"><Card><CardContent className="pt-6 text-center"><div className="text-3xl font-medium text-blue-600">{selectedPatient.appointments.total}</div><p className="text-sm text-muted-foreground">Total Visits</p></CardContent></Card><Card><CardContent className="pt-6 text-center"><div className="text-3xl font-medium text-green-600">{selectedPatient.appointments.completed}</div><p className="text-sm text-muted-foreground">Completed</p></CardContent></Card><Card><CardContent className="pt-6 text-center"><div className="text-3xl font-medium text-purple-600">{selectedPatient.appointments.upcoming}</div><p className="text-sm text-muted-foreground">Upcoming</p></CardContent></Card><Card><CardContent className="pt-6 text-center"><div className="text-3xl font-medium text-red-600">{selectedPatient.appointments.cancelled}</div><p className="text-sm text-muted-foreground">Cancelled</p></CardContent></Card></div>
-                <div className="space-y-3"><h4 className="font-semibold">Appointment History</h4><div className="space-y-2"><div className="flex items-start gap-3 p-3 border rounded-lg"><div className="p-2 bg-green-100 rounded-full"><CheckCircle className="h-4 w-4 text-green-600" /></div><div className="flex-1"><div className="font-medium">Annual Physical Examination</div><div className="text-sm text-muted-foreground">{selectedPatient.lastVisit}</div><p className="text-sm mt-1">Complete checkup. All vitals within normal range.</p></div></div><div className="flex items-start gap-3 p-3 border rounded-lg"><div className="p-2 bg-green-100 rounded-full"><CheckCircle className="h-4 w-4 text-green-600" /></div><div className="flex-1"><div className="font-medium">Follow-up Consultation</div><div className="text-sm text-muted-foreground">September 15, 2025</div><p className="text-sm mt-1">Reviewed lab results. Medication adjusted.</p></div></div></div></div>
-              </TabsContent>
-              <TabsContent value="prescriptions" className="space-y-4 mt-4">
-                <div className="flex items-center justify-between"><h4 className="font-semibold">Prescription History</h4><Button size="sm" onClick={() => { setIsProfileOpen(false); handleAddPrescription(selectedPatient); }}><PlusCircle className="h-4 w-4 mr-2" />New Prescription</Button></div>
-                <div className="grid gap-3">{selectedPatient.medications.map((medication, idx) => (<Card key={idx}><CardContent className="pt-6"><div className="flex items-start justify-between"><div className="flex-1"><h5 className="font-semibold">{medication}</h5><p className="text-sm text-muted-foreground mt-1">Prescribed on: {selectedPatient.lastVisit}</p><div className="flex items-center gap-4 mt-2 text-sm"><span className="text-muted-foreground">Duration: 30 days</span><span className="text-muted-foreground">Refills: 2</span></div></div><Badge variant="secondary">Active</Badge></div></CardContent></Card>))}</div>
-              </TabsContent>
-              <TabsContent value="billing" className="space-y-4 mt-4">
-                <div className="grid grid-cols-3 gap-4"><Card className="bg-gradient-to-br from-green-50 to-emerald-50"><CardContent className="pt-6 text-center"><div className="text-3xl font-medium text-green-600">₹{selectedPatient.totalSpent.toLocaleString()}</div><p className="text-sm text-muted-foreground">Total Spent</p></CardContent></Card><Card className="bg-gradient-to-br from-blue-50 to-cyan-50"><CardContent className="pt-6 text-center"><div className="text-3xl font-medium text-blue-600">₹{selectedPatient.lastPayment.toLocaleString()}</div><p className="text-sm text-muted-foreground">Last Payment</p></CardContent></Card><Card className="bg-gradient-to-br from-purple-50 to-violet-50"><CardContent className="pt-6 text-center"><div className="text-3xl font-medium text-purple-600">₹0</div><p className="text-sm text-muted-foreground">Outstanding</p></CardContent></Card></div>
-                <div className="space-y-3"><h4 className="font-semibold">Payment History</h4><div className="space-y-2"><div className="flex items-center justify-between p-3 border rounded-lg"><div className="flex items-center gap-3"><Receipt className="h-5 w-5 text-green-600" /><div><p className="font-medium">Consultation Fee</p><p className="text-sm text-muted-foreground">{selectedPatient.lastVisit}</p></div></div><div className="text-right"><p className="font-semibold text-green-600">₹{selectedPatient.lastPayment}</p><Badge variant="secondary" className="text-xs">Paid</Badge></div></div></div></div>
-              </TabsContent>
-            </Tabs>
-          )}
-          <DialogFooter className="gap-2"><Button variant="outline" onClick={() => setIsProfileOpen(false)}>Close</Button>{selectedPatient && (<><Button variant="outline" onClick={() => { setIsProfileOpen(false); handleEditPatient(selectedPatient); }}><Edit className="h-4 w-4 mr-2" />Edit</Button><Button onClick={() => { setIsProfileOpen(false); handleScheduleAppointment(selectedPatient); }}><CalendarPlus className="h-4 w-4 mr-2" />Schedule Appointment</Button></>)}</DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       <Dialog open={isNewPatientOpen} onOpenChange={setIsNewPatientOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">

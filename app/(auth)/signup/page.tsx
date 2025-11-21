@@ -1,6 +1,4 @@
-// File: app/signup/page.tsx
-
-"use client"; // This is required for using hooks like useState and useRouter
+"use client"; 
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -16,21 +14,51 @@ export default function SignupPage() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Added loading state
 
-  // This function will handle the form submission
-  const handleSignup = (event: React.FormEvent) => {
-    event.preventDefault(); // Prevent the default form submission behavior
+  const handleSignup = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setIsLoading(true);
 
-    // For now, we'll just log the details and navigate
-    console.log('Simulating account creation for:', { fullName, email });
+    try {
+      // 1. Connect to Django Backend
+      const res = await fetch('http://127.0.0.1:8000/api/register/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          user_type: 'doctor', // <--- CRITICAL: Logic to tell backend this is a Doctor
+        }),
+      });
 
-    // Directly navigate to the dashboard page
-    router.push('/dashboard');
+      const data = await res.json();
+
+      if (res.ok) {
+        // 2. Success
+        alert("Account Created Successfully! Please Login.");
+        router.push('/login');
+      } else {
+        // 3. Error (e.g., Email already exists)
+        // data usually contains field errors like { email: ["User with this email already exists."] }
+        const errorMessage = data.email ? data.email[0] : "Registration Failed";
+        alert(errorMessage);
+      }
+    } catch (error) {
+      console.error("Registration Error:", error);
+      alert("Could not connect to server.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      {/* ... Background div ... */}
       <div className="absolute inset-0 bg-grid-slate-200 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" style={{backgroundSize: '40px 40px'}}></div>
+      
       <div className="container z-10 flex justify-center px-4">
         <Card className="w-full max-w-md shadow-2xl border border-slate-200 bg-white/80 backdrop-blur-md">
           <CardHeader className="text-center space-y-4 pt-8">
@@ -46,7 +74,7 @@ export default function SignupPage() {
             <CardDescription className="text-slate-600">Join the leading platform for modern medical practices.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-6 p-8">
-            {/* We wrap the input fields and button in a form element */}
+            
             <form onSubmit={handleSignup} className="grid gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="full-name" className="text-slate-700">Full Name</Label>
@@ -58,6 +86,7 @@ export default function SignupPage() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)} 
                 />
+                {/* Note: We aren't sending Name to backend yet, just Email/Password for auth */}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="email" className="text-slate-700">Email Address</Label>
@@ -82,11 +111,16 @@ export default function SignupPage() {
                   onChange={(e) => setPassword(e.target.value)} 
                 />
               </div>
-              <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:opacity-90 text-white text-base py-6">
-                Create Account
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:opacity-90 text-white text-base py-6"
+              >
+                {isLoading ? "Creating Account..." : "Create Account"}
               </Button>
             </form>
             
+            {/* ... Rest of the UI (Social Login / Divider) ... */}
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t" />

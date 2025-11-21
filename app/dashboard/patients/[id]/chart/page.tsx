@@ -283,11 +283,15 @@ function PatientInfoCard({ patient }: { patient: PatientDetails }) {
         </div>
         <Separator />
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="flex-1">
-            <MessageSquare className="h-4 w-4 mr-2" /> Message
+          <Button variant="outline" size="sm" className="flex-1" asChild>
+            <Link href={`/dashboard/messages?patient=${patient.id}`}>
+              <MessageSquare className="h-4 w-4 mr-2" /> Message
+            </Link>
           </Button>
-          <Button size="sm" className="flex-1">
-            <PhoneCall className="h-4 w-4 mr-2" /> Start Call
+          <Button size="sm" className="flex-1" asChild>
+            <Link href={`/dashboard/messages?patient=${patient.id}&video=true`}>
+              <PhoneCall className="h-4 w-4 mr-2" /> Start Call
+            </Link>
           </Button>
         </div>
       </CardContent>
